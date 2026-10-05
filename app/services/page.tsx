@@ -16,9 +16,11 @@ export default function ServicesPage() {
   const [error,setError]=useState("");
 
   useEffect(()=>{
+    let cancelled=false;
     async function load(){
       setLoading(true); setError("");
-      const result=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,region,work_format").eq("status","published").order("created_at",{ascending:false});
+      const result=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,region,work_format").eq("status","published").order("created_at",{ascending:false}).limit(60);
+      if(cancelled)return;
       if(result.error){setError("Не удалось загрузить каталог: "+result.error.message);setLoading(false);return;}
       const rows=(result.data||[]) as Service[];
       const ids=[...new Set(rows.map(x=>x.user_id))];
@@ -27,11 +29,13 @@ export default function ServicesPage() {
         const profiles=await supabase.from("profiles").select("id,display_name").in("id",ids);
         if(!profiles.error) for(const p of profiles.data||[]) names[p.id]=p.display_name||"Исполнитель";
       }
+      if(cancelled)return;
       setServices(rows.map(x=>({...x,provider_name:names[x.user_id]||"Исполнитель"})));
       setLoading(false);
     }
     load();
-  },[supabase]);
+    return()=>{cancelled=true};
+  },[]);
 
   const filtered=services.filter(s=>(s.title+" "+s.description+" "+(s.city||"")+" "+(s.region||"")).toLowerCase().includes(search.toLowerCase()));
 
