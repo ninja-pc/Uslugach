@@ -1,3 +1,5 @@
+import SiteHeader from "@/components/SiteHeader";
+
 const categories = [
   "Ремонт и строительство",
   "Красота и здоровье",
@@ -12,15 +14,7 @@ const categories = [
 export default function Home() {
   return (
     <main>
-      <header className="header">
-        <a className="logo" href="/">⚡ Услугач</a>
-        <nav>
-          <a href="/services">Найти услугу</a>
-          <a href="/requests">Нужны услуги</a>
-          <a className="button secondary" href="/login">Войти</a>
-          <a className="button" href="/register">Регистрация</a>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="hero">
         <div className="hero-copy">
