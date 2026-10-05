@@ -45,7 +45,7 @@ export default function ServicePage(){
      {chat_id:chatId,user_id:u.user.id},
      {chat_id:chatId,user_id:service.user_id}
    ]);
-   if(participantsError){setContactError("Не удалось подключить участников к диалогу.");setContacting(false);return}
+   if(participantsError){setContactError(`Не удалось подключить участников: ${participantsError.message}`);setContacting(false);return}
    window.location.href="/chat?id="+chatId;
  }
 
