@@ -16,3 +16,7 @@ MVP маркетплейса услуг.
 4. Start: npm run dev
 
 The MVP follows the product specification in the project: services, requests, search, profiles, responses, chat, reviews, favorites, complaints and admin moderation.
+
+## Deployment
+
+The project uses a patched Next.js release.
