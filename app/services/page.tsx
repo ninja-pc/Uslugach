@@ -13,7 +13,7 @@ export default function ServicesPage() {
     <section className="section"><span className="eyebrow">Каталог</span><h1>Услуги</h1>
     <div className="search catalog-search"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Поиск по услугам, описанию или городу" /></div>
     {filtered.length===0 ? <div className="empty">Пока опубликованных услуг нет. Станьте первым исполнителем.</div> :
-      <div className="service-grid">{filtered.map(s=><a className="service-card" href={"/services/"+s.id} key={s.id}>
+      <div className="service-grid">{filtered.map(s=><a className="service-card" href={"/service?id="+s.id} key={s.id}>
         <div className="service-top"><span>{s.city||"Онлайн"}</span><span>{s.work_format==="remote"?"Удалённо":s.work_format==="hybrid"?"Гибрид":"На месте"}</span></div>
         <h3>{s.title}</h3><p>{s.description}</p><strong>{s.price==null?"Цена по договорённости":String(s.price)+" ₽"+(s.price_type==="hourly"?" / час":"")}</strong><small>{s.profiles?.display_name||"Исполнитель"}</small>
       </a>)}</div>}
