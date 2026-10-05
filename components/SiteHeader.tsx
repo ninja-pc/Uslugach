@@ -40,13 +40,15 @@ export default function SiteHeader() {
         <a className="location-pill" href="/services"><img src="/icons/location.svg" alt="" /><span>Москва</span><b>⌄</b></a>
         <nav className="main-nav">
           <a href="/services">Услуги</a>
+          <a href="/requests">Заявки</a>
           <a href="/services">Исполнители</a>
-          <a href="/profile">О проекте</a>
+          <a href="/profile">Кабинет</a>
         </nav>
         <div className="header-actions">
           <a className="header-search" href="/services" aria-label="Поиск"><img src="/icons/search.svg" alt="" /></a>
           {ready && !email && <a className="header-login" href="/login">Войти</a>}
           {ready && !email && <a className="header-register" href="/register">Регистрация</a>}
+          {email && <a className="header-login" href="/chats">Чаты</a>}
           {email && <a className="header-login" href="/profile">Кабинет</a>}
           {email && <a className="header-register" href="/services/new">Разместить услугу</a>}
           {email && <button className="header-logout" onClick={logout}>Выйти</button>}
