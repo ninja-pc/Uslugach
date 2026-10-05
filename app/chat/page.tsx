@@ -20,7 +20,8 @@ export default function ChatPage(){
     const {data:participants}=await supabase.from("chat_participants").select("user_id").eq("chat_id",currentChatId);
     const other=(participants||[]).find(p=>p.user_id!==u.user.id);
     if(other){setOtherUserId(other.user_id);const {data:p}=await supabase.from("profiles").select("display_name").eq("id",other.user_id).single();if(p?.display_name)setPersonName(p.display_name)}
-    if(chat?.service_id){setServiceId(chat.service_id); const {data:svc}=await supabase.from("services").select("user_id").eq("id",chat.service_id).maybeSingle(); setServiceOwnerId(svc?.user_id||null); if(other?.user_id){const {data:existingReview}=await supabase.from("reviews").select("id").eq("author_id",u.user.id).eq("service_id",chat.service_id).maybeSingle();setReviewExists(!!existingReview)}}\n    if(chat?.request_id){
+    if(chat?.service_id){setServiceId(chat.service_id); const {data:svc}=await supabase.from("services").select("user_id").eq("id",chat.service_id).maybeSingle(); setServiceOwnerId(svc?.user_id||null); if(other?.user_id){const {data:existingReview}=await supabase.from("reviews").select("id").eq("author_id",u.user.id).eq("service_id",chat.service_id).maybeSingle();setReviewExists(!!existingReview)}}
+    if(chat?.request_id){
       const {data:r}=await supabase.from("requests").select("title").eq("id",chat.request_id).single();
       if(r?.title)setTitle(r.title);
     } else if(chat?.service_id){
@@ -60,7 +61,15 @@ export default function ChatPage(){
     textareaRef.current?.focus();
   }
 
-  async function submitReview(e:FormEvent){\n    e.preventDefault(); if(!me||!serviceId||!otherUserId||reviewSending||reviewExists)return;\n    setReviewSending(true); setError("");\n    const {error:e2}=await supabase.from("reviews").insert({author_id:me.id,target_user_id:otherUserId,service_id:serviceId,rating:reviewRating,body:reviewBody.trim()||null});\n    if(e2)setError(e2.message); else {setReviewExists(true);setReviewSent(true);setReviewBody("");}\n    setReviewSending(false);\n  }\n\n  function onKeyDown(e:React.KeyboardEvent<HTMLTextAreaElement>){
+  async function submitReview(e:FormEvent){
+    e.preventDefault(); if(!me||!serviceId||!otherUserId||reviewSending||reviewExists)return;
+    setReviewSending(true); setError("");
+    const {error:e2}=await supabase.from("reviews").insert({author_id:me.id,target_user_id:otherUserId,service_id:serviceId,rating:reviewRating,body:reviewBody.trim()||null});
+    if(e2)setError(e2.message); else {setReviewExists(true);setReviewSent(true);setReviewBody("");}
+    setReviewSending(false);
+  }
+
+  function onKeyDown(e:React.KeyboardEvent<HTMLTextAreaElement>){
     if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}
   }
 
@@ -85,7 +94,9 @@ export default function ChatPage(){
         <button className="chat-send" disabled={sending||!body.trim()} aria-label="Отправить"><img src="/icons/send.svg" alt="" /></button>
       </form>
       {error&&<div className="chat-error">{error}</div>}
-      {serviceId&&me?.id!==serviceOwnerId&&otherUserId&&!reviewExists&&<form className="chat-review" onSubmit={submitReview}><div><strong>Как прошла работа?</strong><span>Оставьте отзыв об исполнителе — он появится в его профиле.</span></div><div className="review-stars">{[1,2,3,4,5].map(n=><button type="button" key={n} className={n<=reviewRating?"active":""} onClick={()=>setReviewRating(n)} aria-label={`${n} из 5`}>★</button>)}</div><textarea value={reviewBody} onChange={e=>setReviewBody(e.target.value)} placeholder="Коротко расскажите о работе…" /><button className="button" disabled={reviewSending}>{reviewSending?"Отправляем…":"Оставить отзыв"}</button></form>}\n      {reviewSent&&<div className="form-success">Спасибо! Отзыв опубликован.</div>}\n      <div className="chat-hint">Enter — отправить · Shift + Enter — новая строка</div>
+      {serviceId&&me?.id!==serviceOwnerId&&otherUserId&&!reviewExists&&<form className="chat-review" onSubmit={submitReview}><div><strong>Как прошла работа?</strong><span>Оставьте отзыв об исполнителе — он появится в его профиле.</span></div><div className="review-stars">{[1,2,3,4,5].map(n=><button type="button" key={n} className={n<=reviewRating?"active":""} onClick={()=>setReviewRating(n)} aria-label={`${n} из 5`}>★</button>)}</div><textarea value={reviewBody} onChange={e=>setReviewBody(e.target.value)} placeholder="Коротко расскажите о работе…" /><button className="button" disabled={reviewSending}>{reviewSending?"Отправляем…":"Оставить отзыв"}</button></form>}
+      {reviewSent&&<div className="form-success">Спасибо! Отзыв опубликован.</div>}
+      <div className="chat-hint">Enter — отправить · Shift + Enter — новая строка</div>
     </section>
   </main></>;
 }
