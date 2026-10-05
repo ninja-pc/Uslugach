@@ -12,7 +12,7 @@ function imageFor(s:{title:string;description?:string|null}){const t=(s.title+" 
 function price(v:number|null,t:string|null){if(v==null)return "Цена по договорённости";return new Intl.NumberFormat("ru-RU").format(v)+" ₽"+(t==="hourly"?" / час":"")}
 
 export default function ServicePage(){
- const [service,setService]=useState<Service|null>(null); const [similar,setSimilar]=useState<Similar[]>([]); const [loading,setLoading]=useState(true); const [error,setError]=useState("");
+ const [service,setService]=useState<Service|null>(null);const [similar,setSimilar]=useState<Similar[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [contacting,setContacting]=useState(false);const [contactError,setContactError]=useState("");
  useEffect(()=>{async function load(){const id=new URLSearchParams(window.location.search).get("id");if(!id){setError("Услуга не найдена.");setLoading(false);return}
   const result=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,district,region,work_format,category_id").eq("id",id).eq("status","published").maybeSingle();
   if(result.error||!result.data){setError(result.error?"Не удалось загрузить услугу.":"Услуга не найдена или снята с публикации.");setLoading(false);return}
@@ -21,9 +21,32 @@ export default function ServicePage(){
   let query=supabase.from("services").select("id,user_id,title,description,price,price_type,city,work_format").eq("status","published").neq("id",id).limit(4);
   if(result.data.category_id) query=query.eq("category_id",result.data.category_id);
   let rel=await query.order("created_at",{ascending:false});
-  if(!rel.data?.length && result.data.category_id){ rel=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,work_format").eq("status","published").neq("id",id).order("created_at",{ascending:false}).limit(4); }
-  setSimilar((rel.data||[]) as Similar[]); setLoading(false);
+  if(!rel.data?.length&&result.data.category_id)rel=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,work_format").eq("status","published").neq("id",id).order("created_at",{ascending:false}).limit(4);
+  setSimilar((rel.data||[]) as Similar[]);setLoading(false);
  }load()},[]);
+
+ async function startChat(){
+   if(!service)return;
+   setContacting(true);setContactError("");
+   const {data:u}=await supabase.auth.getUser();
+   if(!u.user){window.location.href="/login?next="+encodeURIComponent("/service?id="+service.id);return}
+   if(u.user.id===service.user_id){setContactError("Это ваша услуга — написать самому себе нельзя.");setContacting(false);return}
+   const {data:parts,error:partsError}=await supabase.from("chat_participants").select("chat_id").eq("user_id",u.user.id);
+   if(partsError){setContactError("Не удалось открыть чаты.");setContacting(false);return}
+   const ids=(parts||[]).map(p=>p.chat_id);
+   if(ids.length){
+     const {data:existing}=await supabase.from("chats").select("id").in("id",ids).eq("service_id",service.id).limit(1).maybeSingle();
+     if(existing?.id){window.location.href="/chat?id="+existing.id;return}
+   }
+   const {data:chat,error:chatError}=await supabase.from("chats").insert({service_id:service.id}).select("id").single();
+   if(chatError||!chat){setContactError("Не удалось создать диалог.");setContacting(false);return}
+   const {error:selfError}=await supabase.from("chat_participants").insert({chat_id:chat.id,user_id:u.user.id});
+   if(selfError){setContactError("Не удалось подключить вас к диалогу.");setContacting(false);return}
+   const {error:providerError}=await supabase.from("chat_participants").insert({chat_id:chat.id,user_id:service.user_id});
+   if(providerError){setContactError("Не удалось подключить исполнителя к диалогу.");setContacting(false);return}
+   window.location.href="/chat?id="+chat.id;
+ }
+
  if(loading)return <main className="page"><SiteHeader/><section className="section"><p>Загружаем услугу...</p></section></main>;
  if(error)return <main className="page"><SiteHeader/><section className="section narrow"><div className="form-error">{error}</div><a className="button" href="/services">Вернуться в каталог</a></section></main>;
  if(!service)return null;
@@ -39,7 +62,7 @@ export default function ServicePage(){
       <div className="service-note"><strong>Перед заказом</strong><span>Уточните сроки, итоговую стоимость и детали работы напрямую с исполнителем.</span></div>
      </div>
     </article>
-    <aside className="service-side"><div className="provider-card-new"><span className="eyebrow">Исполнитель</span><div className="provider-big"><span>{service.provider_name.slice(0,1).toUpperCase()}</span><div><h2>{service.provider_name}</h2><small>{service.city||service.region||"Россия"}</small></div></div><p>{service.bio||"Исполнитель пока не добавил описание профиля."}</p><a className="button wide" href="/login">Написать исполнителю</a><a className="side-link" href="/login">Войти, чтобы связаться →</a></div>
+    <aside className="service-side"><div className="provider-card-new"><span className="eyebrow">Исполнитель</span><div className="provider-big"><span>{service.provider_name.slice(0,1).toUpperCase()}</span><div><h2>{service.provider_name}</h2><small>{service.city||service.region||"Россия"}</small></div></div><p>{service.bio||"Исполнитель пока не добавил описание профиля."}</p><button className="button wide" onClick={startChat} disabled={contacting}>{contacting?"Открываем чат…":"Написать исполнителю"}</button>{contactError&&<div className="form-error">{contactError}</div>}<a className="side-link" href="/profile">Открыть кабинет →</a></div>
      <div className="trust-card"><strong>Что обсудить до заказа</strong><div><span>01</span>Задачу и ожидаемый результат</div><div><span>02</span>Цену и сроки выполнения</div><div><span>03</span>Формат связи и место работы</div></div></aside>
    </div>
    {similar.length>0&&<section className="similar-section"><div className="section-head"><div><span className="eyebrow">Ещё варианты</span><h2>Похожие услуги</h2></div><a href="/services" className="see-all">Смотреть весь каталог →</a></div><div className="similar-grid">{similar.map(s=><a className="similar-card" href={"/service?id="+s.id} key={s.id}><div className="similar-image"><img src={imageFor(s)} alt="" /></div><span>{s.city||"Онлайн"}</span><h3>{s.title}</h3><p>{s.description||"Описание услуги"}</p><strong>{price(s.price,s.price_type)}</strong></a>)}</div></section>}
