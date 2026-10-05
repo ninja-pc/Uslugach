@@ -86,3 +86,11 @@ footer { padding:35px 5vw; border-top:1px solid var(--line); color:var(--muted);
 .profile-card h2{font-size:28px}
 @media(max-width:900px){.service-grid{grid-template-columns:1fr 1fr}.service-detail{grid-template-columns:1fr}}
 @media(max-width:600px){.form-grid,.service-grid{grid-template-columns:1fr}.form-card{padding:24px}.form-card h1{font-size:38px}.service-main{padding:26px}.service-main h1{font-size:42px}}
+
+.cabinet-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:28px 0}
+.cabinet-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.cabinet-card strong{font-size:18px}
+.cabinet-card span{color:var(--muted);font-size:14px}
+.cabinet-logout{margin-top:8px;align-self:flex-start}
+.header nav{flex-wrap:wrap}
+@media(max-width:700px){.cabinet-grid{grid-template-columns:1fr}.header{height:auto;min-height:72px;padding-top:12px;padding-bottom:12px}.header nav{gap:10px}.header nav .button{min-height:40px;padding:0 12px}}
