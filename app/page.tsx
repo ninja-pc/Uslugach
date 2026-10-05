@@ -49,8 +49,9 @@ function formatPrice(price: number | null, type: string | null) {
   return `${value} ₽`;
 }
 
+const supabase = createClient();
+
 export default function Home() {
-  const supabase = createClient();
   const [services, setServices] = useState<Service[]>([]);
   const [profiles, setProfiles] = useState<Record<string, Profile>>({});
   const [categoryMap, setCategoryMap] = useState<Record<number, Category>>({});
