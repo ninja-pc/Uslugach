@@ -1,25 +1,29 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const supabase = createClient();
+  const [nextPath, setNextPath] = useState("/profile");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (next && next.startsWith("/")) setNextPath(next);
+  }, []);
 
   async function submit(event: FormEvent) {
     event.preventDefault(); setError(""); setLoading(true);
     const result = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (result.error) { setError(result.error.message); return; }
-    const next = searchParams.get("next");
-    router.push(next && next.startsWith("/") ? next : "/profile");
+    router.push(nextPath);
     router.refresh();
   }
 
@@ -30,6 +34,6 @@ export default function LoginPage() {
     <label>Пароль<input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} /></label>
     {error && <div className="form-error">{error}</div>}
     <button className="button wide" disabled={loading}>{loading ? "Входим..." : "Войти"}</button>
-    <p className="form-foot">Нет аккаунта? <a href={"/register" + (searchParams.get("next") ? "?next=" + encodeURIComponent(searchParams.get("next")!) : "")}>Зарегистрироваться</a></p>
+    <p className="form-foot">Нет аккаунта? <a href={"/register?next=" + encodeURIComponent(nextPath)}>Зарегистрироваться</a></p>
   </form></main>;
 }
