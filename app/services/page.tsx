@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import SiteHeader from "@/components/SiteHeader";
 
 type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;region:string|null;work_format:string;provider_name?:string};
+function imageFor(s:Service){const t=(s.title+" "+s.description).toLowerCase();if(t.includes("уборк")||t.includes("клини"))return "/illustrations/cleaning.svg";if(t.includes("ремонт")||t.includes("стро")||t.includes("сантех")||t.includes("электр"))return "/illustrations/repair.svg";if(t.includes("it")||t.includes("сайт")||t.includes("компьют")||t.includes("программ"))return "/illustrations/it.svg";if(t.includes("красот")||t.includes("массаж")||t.includes("здоров"))return "/illustrations/beauty.svg";if(t.includes("достав")||t.includes("авто")||t.includes("курьер"))return "/illustrations/delivery.svg";return "/illustrations/other.svg";}
 
 export default function ServicesPage() {
   const supabase=createClient();
@@ -34,12 +35,9 @@ export default function ServicesPage() {
   const filtered=services.filter(s=>(s.title+" "+s.description+" "+(s.city||"")+" "+(s.region||"")).toLowerCase().includes(search.toLowerCase()));
 
   return <main className="page"><SiteHeader />
-    <section className="section"><span className="eyebrow">Каталог</span><h1>Услуги</h1>
-    <div className="search catalog-search"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Поиск по услугам, описанию, городу или региону" /></div>
+    <section className="section catalog-page"><div className="catalog-heading"><div><span className="eyebrow">Маркетплейс</span><h1>Найдите специалиста</h1><p>Реальные опубликованные услуги от исполнителей.</p></div><a className="button" href="/services/new">Разместить услугу</a></div>
+    <div className="search catalog-search"><img src="/icons/search.svg" alt="" /><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Поиск по услугам, описанию, городу или региону" /></div>
     {loading ? <div className="empty">Загружаем услуги...</div> : error ? <div className="form-error">{error}</div> : filtered.length===0 ? <div className="empty">Пока опубликованных услуг нет. Станьте первым исполнителем.</div> :
-      <div className="service-grid">{filtered.map(s=><a className="service-card" href={"/service?id="+s.id} key={s.id}>
-        <div className="service-top"><span>{s.city||"Онлайн"}</span><span>{s.work_format==="remote"?"Удалённо":s.work_format==="hybrid"?"Гибрид":"На месте"}</span></div>
-        <h3>{s.title}</h3><p>{s.description}</p><strong>{s.price==null?"Цена по договорённости":String(s.price)+" ₽"+(s.price_type==="hourly"?" / час":"")}</strong><small>{s.provider_name}</small>
-      </a>)}</div>}
+      <div className="service-grid">{filtered.map(s=><a className="service-card" href={"/service?id="+s.id} key={s.id}><div className="service-card-image"><img src={imageFor(s)} alt="" /><span className="service-favorite"><img src="/icons/heart.svg" alt="" /></span></div><div className="service-top"><span>{s.city||"Онлайн"}</span><span>{s.work_format==="remote"?"Удалённо":s.work_format==="hybrid"?"Гибрид":"На месте"}</span></div><h3>{s.title}</h3><p>{s.description}</p><div className="service-card-bottom"><strong>{s.price==null?"По договорённости":new Intl.NumberFormat("ru-RU").format(s.price)+" ₽"+(s.price_type==="hourly"?" / час":"")}</strong><small>{s.provider_name}</small></div></a>)}</div>}
     </section></main>;
 }
