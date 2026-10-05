@@ -20,7 +20,9 @@ export default function ServicePage(){
   setService({...result.data,provider_name:profile.data?.display_name||"Исполнитель",bio:profile.data?.bio||null} as Service);
   let query=supabase.from("services").select("id,user_id,title,description,price,price_type,city,work_format").eq("status","published").neq("id",id).limit(4);
   if(result.data.category_id) query=query.eq("category_id",result.data.category_id);
-  const rel=await query.order("created_at",{ascending:false}); setSimilar((rel.data||[]) as Similar[]); setLoading(false);
+  let rel=await query.order("created_at",{ascending:false});
+  if(!rel.data?.length && result.data.category_id){ rel=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,work_format").eq("status","published").neq("id",id).order("created_at",{ascending:false}).limit(4); }
+  setSimilar((rel.data||[]) as Similar[]); setLoading(false);
  }load()},[]);
  if(loading)return <main className="page"><SiteHeader/><section className="section"><p>Загружаем услугу...</p></section></main>;
  if(error)return <main className="page"><SiteHeader/><section className="section narrow"><div className="form-error">{error}</div><a className="button" href="/services">Вернуться в каталог</a></section></main>;
