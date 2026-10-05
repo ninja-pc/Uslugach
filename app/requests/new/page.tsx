@@ -108,23 +108,14 @@ export default function NewRequestPage() {
   return (
     <>
       <SiteHeader />
-      <main className="page-shell">
-        <section className="detail-hero">
-          <div>
-            <span className="eyebrow">Новая заявка</span>
-            <h1>Опишите задачу — специалисты откликнутся</h1>
-            <p>
-              Чем подробнее вы расскажете о задаче, сроках и бюджете, тем точнее
-              будут предложения.
-            </p>
-          </div>
-
-          <div className="service-visual request-create-visual">
-            <img
-              src="/illustrations/repair.svg"
-              alt="Иллюстрация ремонта и услуг"
-            />
-          </div>
+      <main className="page-shell request-create-page">
+        <section className="request-create-head">
+          <span className="eyebrow">Новая заявка</span>
+          <h1>Опишите задачу — специалисты откликнутся</h1>
+          <p>
+            Чем подробнее вы расскажете о задаче, сроках и бюджете, тем точнее
+            будут предложения.
+          </p>
         </section>
 
         <form className="form-card" onSubmit={submit}>
