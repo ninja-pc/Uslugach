@@ -20,3 +20,6 @@ The MVP follows the product specification in the project: services, requests, se
 ## Deployment
 
 The project uses a patched Next.js release.
+
+
+Supabase environment is configured for Vercel production and preview deployments.
