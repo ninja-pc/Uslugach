@@ -31,7 +31,7 @@ export default function NewServicePage() {
     }).select("id").single();
     setLoading(false);
     if (result.error) { setError(result.error.message); return; }
-    router.push("/services/" + result.data.id);
+    router.push("/service?id=" + result.data.id);
   }
 
   return <main className="page"><header className="header"><a className="logo" href="/">⚡ Услугач</a><nav><a href="/services">Все услуги</a></nav></header>
