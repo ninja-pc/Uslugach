@@ -10,8 +10,10 @@ type Profile = { display_name: string | null; bio: string | null; region: string
 type Service = { id:string; title:string; description:string|null; price:number|null; price_type:string|null; city:string|null; status:string };
 type Request = { id:string; title:string; description:string|null; budget:number|null; city:string|null; deadline:string|null; status:string };
 
+const supabase = createClient();
+
 export default function ProfilePage() {
-  const router = useRouter(); const supabase = createClient();
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile>({display_name:"",bio:"",region:"",city:"",district:"",phone:""});
   const [email, setEmail] = useState(""); const [error, setError] = useState("");
   const [saved, setSaved] = useState(false); const [loading, setLoading] = useState(true);
