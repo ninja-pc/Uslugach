@@ -12,26 +12,19 @@ export default function SiteHeader() {
 
   useEffect(() => {
     let mounted = true;
-
     async function loadUser() {
       const { data } = await supabase.auth.getUser();
       if (!mounted) return;
       setEmail(data.user?.email ?? null);
       setReady(true);
     }
-
     loadUser();
-
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
       setEmail(session?.user?.email ?? null);
       setReady(true);
     });
-
-    return () => {
-      mounted = false;
-      listener.subscription.unsubscribe();
-    };
+    return () => { mounted = false; listener.subscription.unsubscribe(); };
   }, [supabase]);
 
   async function logout() {
@@ -41,16 +34,24 @@ export default function SiteHeader() {
   }
 
   return (
-    <header className="header">
-      <a className="logo" href="/">⚡ Услугач</a>
-      <nav>
-        <a href="/services">Найти услугу</a>
-        {email && <a href="/profile">Кабинет</a>}
-        {email && <a className="button" href="/services/new">Разместить услугу</a>}
-        {ready && !email && <a className="button secondary" href="/login">Войти</a>}
-        {ready && !email && <a className="button" href="/register">Регистрация</a>}
-        {email && <button className="text-button" onClick={logout}>Выйти</button>}
-      </nav>
+    <header className="modern-header">
+      <div className="header-main">
+        <a className="brand" href="/"><span className="brand-mark">⚡</span><span>Услугач</span></a>
+        <a className="location-pill" href="/services">⌖ <span>Москва</span> <b>⌄</b></a>
+        <nav className="main-nav">
+          <a href="/services">Услуги</a>
+          <a href="/services">Исполнители</a>
+          <a href="/profile">О проекте</a>
+        </nav>
+        <div className="header-actions">
+          <a className="header-search" href="/services" aria-label="Поиск">⌕</a>
+          {ready && !email && <a className="header-login" href="/login">Войти</a>}
+          {ready && !email && <a className="header-register" href="/register">Регистрация</a>}
+          {email && <a className="header-login" href="/profile">Кабинет</a>}
+          {email && <a className="header-register" href="/services/new">Разместить услугу</a>}
+          {email && <button className="header-logout" onClick={logout}>Выйти</button>}
+        </div>
+      </div>
     </header>
   );
 }
