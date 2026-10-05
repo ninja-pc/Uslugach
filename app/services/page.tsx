@@ -7,8 +7,9 @@ import SiteHeader from "@/components/SiteHeader";
 type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;region:string|null;work_format:string;provider_name?:string};
 function imageFor(s:Service){const t=(s.title+" "+s.description).toLowerCase();if(t.includes("уборк")||t.includes("клини"))return "/illustrations/cleaning.svg";if(t.includes("ремонт")||t.includes("стро")||t.includes("сантех")||t.includes("электр"))return "/illustrations/repair.svg";if(t.includes("it")||t.includes("сайт")||t.includes("компьют")||t.includes("программ"))return "/illustrations/it.svg";if(t.includes("красот")||t.includes("массаж")||t.includes("здоров"))return "/illustrations/beauty.svg";if(t.includes("достав")||t.includes("авто")||t.includes("курьер"))return "/illustrations/delivery.svg";return "/illustrations/other.svg";}
 
+const supabase=createClient();
+
 export default function ServicesPage() {
-  const supabase=createClient();
   const [services,setServices]=useState<Service[]>([]);
   const [search,setSearch]=useState("");
   const [loading,setLoading]=useState(true);
