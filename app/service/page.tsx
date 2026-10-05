@@ -38,13 +38,15 @@ export default function ServicePage(){
      const {data:existing}=await supabase.from("chats").select("id").in("id",ids).eq("service_id",service.id).limit(1).maybeSingle();
      if(existing?.id){window.location.href="/chat?id="+existing.id;return}
    }
-   const {data:chat,error:chatError}=await supabase.from("chats").insert({service_id:service.id}).select("id").single();
-   if(chatError||!chat){setContactError("Не удалось создать диалог.");setContacting(false);return}
-   const {error:selfError}=await supabase.from("chat_participants").insert({chat_id:chat.id,user_id:u.user.id});
-   if(selfError){setContactError("Не удалось подключить вас к диалогу.");setContacting(false);return}
-   const {error:providerError}=await supabase.from("chat_participants").insert({chat_id:chat.id,user_id:service.user_id});
-   if(providerError){setContactError("Не удалось подключить исполнителя к диалогу.");setContacting(false);return}
-   window.location.href="/chat?id="+chat.id;
+   const chatId=crypto.randomUUID();
+   const {error:chatError}=await supabase.from("chats").insert({id:chatId,service_id:service.id});
+   if(chatError){setContactError("Не удалось создать диалог.");setContacting(false);return}
+   const {error:participantsError}=await supabase.from("chat_participants").insert([
+     {chat_id:chatId,user_id:u.user.id},
+     {chat_id:chatId,user_id:service.user_id}
+   ]);
+   if(participantsError){setContactError("Не удалось подключить участников к диалогу.");setContacting(false);return}
+   window.location.href="/chat?id="+chatId;
  }
 
  if(loading)return <main className="page"><SiteHeader/><section className="section"><p>Загружаем услугу...</p></section></main>;
