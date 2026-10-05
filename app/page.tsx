@@ -85,7 +85,7 @@ export default function Home() {
               <a className="preview-card" href="/services" key={service.title}>
                 <div className="preview-image">
                   <span>{service.icon}</span>
-                  <button aria-label="В избранное" onClick={(e) => e.preventDefault()}>♡</button>
+                  <span className="favorite" aria-label="В избранное">♡</span>
                 </div>
                 <div className="rating">★ {service.rating} <small>({service.reviews})</small></div>
                 <h3>{service.title}</h3>
