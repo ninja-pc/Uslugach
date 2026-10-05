@@ -36,15 +36,15 @@ export default function SiteHeader() {
   return (
     <header className="modern-header">
       <div className="header-main">
-        <a className="brand" href="/"><span className="brand-mark">⚡</span><span>Услугач</span></a>
-        <a className="location-pill" href="/services">⌖ <span>Москва</span> <b>⌄</b></a>
+        <a className="brand" href="/"><img className="brand-mark" src="/icons/logo-mark.svg" alt="" /><span>Услугач</span></a>
+        <a className="location-pill" href="/services"><img src="/icons/location.svg" alt="" /><span>Москва</span><b>⌄</b></a>
         <nav className="main-nav">
           <a href="/services">Услуги</a>
           <a href="/services">Исполнители</a>
           <a href="/profile">О проекте</a>
         </nav>
         <div className="header-actions">
-          <a className="header-search" href="/services" aria-label="Поиск">⌕</a>
+          <a className="header-search" href="/services" aria-label="Поиск"><img src="/icons/search.svg" alt="" /></a>
           {ready && !email && <a className="header-login" href="/login">Войти</a>}
           {ready && !email && <a className="header-register" href="/register">Регистрация</a>}
           {email && <a className="header-login" href="/profile">Кабинет</a>}
