@@ -76,7 +76,7 @@ export default function ChatsPage(){
           <div className="chat-list-avatar">{c.personName.slice(0,1).toUpperCase()}</div>
           <div className="chat-list-main">
             <div className="chat-list-top"><strong>{c.personName}</strong><time>{new Date(c.lastAt).toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit"})}</time></div>
-            <div className="chat-list-ad"><img src="/icons/briefcase.svg" alt="" />{c.title}</div>
+            <div className="chat-list-ad"><span className="chat-ad-dot" />{c.title}</div>
             <p>{c.lastMessage}</p>
           </div>
           <div className="chat-list-meta">{c.unread>0&&<span className="chat-unread">{c.unread>99?"99+":c.unread}</span>}<span className="chat-open">›</span></div>
