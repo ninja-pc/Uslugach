@@ -2,14 +2,12 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import SiteHeader from "@/components/SiteHeader";
 
 export default function RequestDetailPage() {
   const supabase=createClient();
-  const params=useSearchParams();
-  const id=params.get("id");
+  const [id,setId]=useState<string|null>(null);
   const [request,setRequest]=useState<any>(null);
   const [owner,setOwner]=useState<any>(null);
   const [responses,setResponses]=useState<any[]>([]);
@@ -19,16 +17,21 @@ export default function RequestDetailPage() {
   const [sending,setSending]=useState(false);
   const [error,setError]=useState("");
 
-  async function load(){
-    if(!id){setLoading(false);return;}
-    const [{data:r},{data:u}]=await Promise.all([supabase.from("requests").select("*").eq("id",id).single(),supabase.auth.getUser()]);
+  async function load(currentId:string|null){
+    if(!currentId){setLoading(false);return;}
+    const [{data:r},{data:u}]=await Promise.all([supabase.from("requests").select("*").eq("id",currentId).single(),supabase.auth.getUser()]);
     setRequest(r); setMe(u.user||null);
     if(r?.user_id){const {data:p}=await supabase.from("profiles").select("display_name,bio,city,region").eq("id",r.user_id).single();setOwner(p);}
-    const {data:rs}=await supabase.from("responses").select("id,user_id,message,price,status,created_at").eq("request_id",id).order("created_at",{ascending:false});
+    const {data:rs}=await supabase.from("responses").select("id,user_id,message,price,status,created_at").eq("request_id",currentId).order("created_at",{ascending:false});
     if(rs?.length){const {data:ps}=await supabase.from("profiles").select("id,display_name,city,region").in("id",[...new Set(rs.map(x=>x.user_id))]);const map:any={};(ps||[]).forEach(p=>map[p.id]=p);setResponses(rs.map(x=>({...x,profile:map[x.user_id]})))} else setResponses([]);
     setLoading(false);
   }
-  useEffect(()=>{load()},[id]);
+
+  useEffect(()=>{
+    const currentId=new URLSearchParams(window.location.search).get("id");
+    setId(currentId);
+    load(currentId);
+  },[]);
 
   async function send(e:FormEvent){
     e.preventDefault();
@@ -38,7 +41,7 @@ export default function RequestDetailPage() {
     setSending(true);setError("");
     const {error}=await supabase.from("responses").insert({request_id:id,user_id:me.id,message:form.message.trim(),price:form.price?Number(form.price):null});
     if(error){setError(error.message);setSending(false);return;}
-    setForm({message:"",price:""}); await load(); setSending(false);
+    setForm({message:"",price:""}); await load(id); setSending(false);
   }
 
   if(loading)return <><SiteHeader/><main className="page-shell"><div className="empty-state">Загрузка заявки…</div></main></>;
