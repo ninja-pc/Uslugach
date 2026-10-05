@@ -110,3 +110,14 @@ main{min-height:100vh}
 .request-create-head p{max-width:680px;margin:0;color:#6f7d95;line-height:1.55;font-size:15px}
 .request-create-page .form-card{width:100%;max-width:none;margin:0}
 @media(max-width:760px){.request-create-page{width:calc(100% - 28px);padding:32px 0 48px}.request-create-head h1{font-size:36px}.request-create-page .form-card{padding:18px}}
+
+/* Global content-width contract: every application page stays inside one viewport-safe container. */
+.page-shell{width:min(1280px,calc(100% - 48px));max-width:1280px;margin:0 auto;padding:0 0 56px;min-width:0;box-sizing:border-box;overflow-x:clip}
+.page-shell>*{min-width:0;max-width:100%}
+.page-shell img,.section img,.content-section img{max-width:100%;height:auto}
+.page-shell input,.page-shell textarea,.page-shell select,.section input,.section textarea,.section select,.form-card input,.form-card textarea,.form-card select{max-width:100%;box-sizing:border-box}
+.service-detail-new,.detail-layout,.service-detail{min-width:0}
+.service-detail-new>*,.detail-layout>*,.service-detail>*{min-width:0}
+.bento-grid,.service-grid,.similar-grid,.cabinet-columns,.cabinet-actions,.form-grid{min-width:0}
+.bento-grid>*,.service-grid>*,.similar-grid>*,.cabinet-columns>*,.cabinet-actions>*,.form-grid>*{min-width:0}
+@media(max-width:760px){.page-shell{width:calc(100% - 28px);padding-bottom:40px}}
