@@ -10,6 +10,22 @@ export default function SiteHeader() {
   const [email,setEmail]=useState<string|null>(null),[ready,setReady]=useState(false),[unread,setUnread]=useState(0);
   const [city, setCity] = useState("Москва");
   const [cityOpen, setCityOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const saved = window.sessionStorage.getItem("uslugach-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const enabled = saved ? saved === "dark" : prefersDark;
+    setDarkMode(enabled);
+    document.documentElement.classList.toggle("dark", enabled);
+  }, []);
+
+  function toggleTheme() {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.documentElement.classList.toggle("dark", next);
+    window.sessionStorage.setItem("uslugach-theme", next ? "dark" : "light");
+  }
 
   async function loadUnread(userId:string){
     const {data:cp}=await supabase.from("chat_participants").select("chat_id,last_read_at").eq("user_id",userId);
@@ -43,6 +59,7 @@ export default function SiteHeader() {
     </div>
     <nav className="main-nav"><a href="/services">Услуги</a><a href="/requests">Заявки</a><a href="/services">Исполнители</a><a href="/profile">Кабинет</a></nav>
     <div className="header-actions">
+      <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={darkMode ? "Включить светлую тему" : "Включить тёмную тему"} title={darkMode ? "Светлая тема" : "Тёмная тема"}><span aria-hidden="true">{darkMode ? "☼" : "◐"}</span></button>
       <a className="header-search" href="/services" aria-label="Поиск"><img src="/icons/search.svg" alt="" /></a>
       {ready&&!email&&<a className="header-login" href="/login">Войти</a>}
       {ready&&!email&&<a className="header-register" href="/register">Регистрация</a>}
