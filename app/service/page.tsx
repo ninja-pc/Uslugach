@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import SiteHeader from "@/components/SiteHeader";
 
-type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;district:string|null;region:string|null;work_format:string;category_id:string|null;provider_name:string;bio:string|null};
+type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;district:string|null;region:string|null;work_format:string;category_id:string|null;provider_name:string;bio:string|null;image_urls:string[]};
 type Similar={id:string;user_id:string;title:string;description:string|null;price:number|null;price_type:string|null;city:string|null;work_format:string|null};
 type Review={id:string;author_id:string;rating:number;body:string|null;created_at:string;author_name:string};
 const supabase=createClient();
@@ -15,7 +15,7 @@ function price(v:number|null,t:string|null){if(v==null)return "Цена по д�
 export default function ServicePage(){
  const [service,setService]=useState<Service|null>(null);const [similar,setSimilar]=useState<Similar[]>([]);const [reviews,setReviews]=useState<Review[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [contacting,setContacting]=useState(false);const [contactError,setContactError]=useState("");const [favorite,setFavorite]=useState(false);
  useEffect(()=>{async function load(){const id=new URLSearchParams(window.location.search).get("id");if(!id){setError("Услуга не найдена.");setLoading(false);return}
-  const result=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,district,region,work_format,category_id").eq("id",id).eq("status","published").maybeSingle();
+  const result=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,district,region,work_format,category_id,image_urls").eq("id",id).eq("status","published").maybeSingle();
   if(result.error||!result.data){setError(result.error?"Не удалось загрузить услугу.":"Услуга не найдена или снята с публикации.");setLoading(false);return}
   const profile=await supabase.from("profiles").select("display_name,bio").eq("id",result.data.user_id).maybeSingle();
   setService({...result.data,provider_name:profile.data?.display_name||"Исполнитель",bio:profile.data?.bio||null} as Service);
@@ -67,7 +67,7 @@ export default function ServicePage(){
    <div className="service-breadcrumb"><a href="/services">Каталог</a><span>/</span><span>{service.city||service.region||"Россия"}</span><span>/</span><strong>{service.title}</strong></div>
    <div className="service-detail-new">
     <article className="service-main-new">
-     <div className="service-visual"><img src={imageFor(service)} alt="" /><button type="button" className={"service-save"+(favorite?" is-favorite":"")} onClick={toggleFavorite} aria-label={favorite?"Убрать из избранного":"Добавить в избранное"}><img src="/icons/heart.svg" alt="" /></button></div>
+     <div className="service-visual">{service.image_urls?.length ? <img src={service.image_urls[0]} alt={service.title} /> : <img src={imageFor(service)} alt="" />}<button type="button" className={"service-save"+(favorite?" is-favorite":"")} onClick={toggleFavorite} aria-label={favorite?"Убрать из избранного":"Добавить в избранное"}><img src="/icons/heart.svg" alt="" /></button></div>
      <div className="service-content"><span className="eyebrow">Предложение услуги</span><h1>{service.title}</h1><div className="detail-chips"><span>{service.city||"Онлайн"}</span><span>{format}</span>{service.region&&<span>{service.region}</span>}</div>
       <p className="service-description">{service.description||"Исполнитель пока не добавил подробное описание этой услуги."}</p>
       <div className="service-facts"><div><small>Стоимость</small><strong>{price(service.price,service.price_type)}</strong></div><div><small>Формат работы</small><strong>{format}</strong></div><div><small>Локация</small><strong>{service.city||service.region||"Онлайн"}</strong></div></div>

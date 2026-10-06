@@ -26,6 +26,8 @@ export default function NewRequestPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [images,setImages]=useState<File[]>([]);
+  const [imageUrls,setImageUrls]=useState<string[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -50,6 +52,19 @@ export default function NewRequestPage() {
 
     load();
   }, []);
+
+  async function uploadImages(userId:string){
+    const urls:string[]=[];
+    for(const file of images){
+      if(!file.type.startsWith("image/") || file.size>10*1024*1024) throw new Error("Каждое фото должно быть JPG, PNG или WebP и не больше 10 МБ.");
+      const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+      const path=userId+"/requests/"+crypto.randomUUID()+"."+ext;
+      const uploaded=await supabase.storage.from("media").upload(path,file,{contentType:file.type,upsert:false});
+      if(uploaded.error) throw uploaded.error;
+      urls.push(supabase.storage.from("media").getPublicUrl(path).data.publicUrl);
+    }
+    return urls;
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,7 +95,7 @@ export default function NewRequestPage() {
         district: form.district.trim() || null,
         deadline: form.deadline || null,
         urgency: form.urgency,
-        status: "published",
+        status: "published",\n        image_urls: uploadedUrls,
       })
       .select("id")
       .single();

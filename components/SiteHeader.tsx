@@ -7,7 +7,7 @@ import { LOCATION_REGIONS } from "@/lib/locations";
 
 export default function SiteHeader() {
   const router=useRouter(); const supabase=createClient();
-  const [email,setEmail]=useState<string|null>(null),[ready,setReady]=useState(false),[unread,setUnread]=useState(0);
+  const [email,setEmail]=useState<string|null>(null),[ready,setReady]=useState(false),[unread,setUnread]=useState(0); const [isAdmin,setIsAdmin]=useState(false);
   const [city, setCity] = useState("Москва");
   const [cityOpen, setCityOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -38,10 +38,10 @@ export default function SiteHeader() {
 
   useEffect(()=>{
     let mounted=true;
-    async function loadUser(){const {data}=await supabase.auth.getUser();if(!mounted)return;setEmail(data.user?.email??null);setReady(true);if(data.user)loadUnread(data.user.id)}
+    async function loadUser(){const {data}=await supabase.auth.getUser();if(!mounted)return;setEmail(data.user?.email??null);setReady(true);if(data.user){loadUnread(data.user.id);const {data:p}=await supabase.from("profiles").select("role,status").eq("id",data.user.id).maybeSingle();setIsAdmin(p?.role==="admin"&&p?.status==="active")}else setIsAdmin(false)}
     loadUser();
     const timer=window.setInterval(async()=>{const {data}=await supabase.auth.getUser();if(data.user)loadUnread(data.user.id)},5000);
-    const {data:listener}=supabase.auth.onAuthStateChange((_event,session)=>{if(!mounted)return;setEmail(session?.user?.email??null);setReady(true);if(session?.user)loadUnread(session.user.id);else setUnread(0)});
+    const {data:listener}=supabase.auth.onAuthStateChange((_event,session)=>{if(!mounted)return;setEmail(session?.user?.email??null);setReady(true);if(session?.user){loadUnread(session.user.id);supabase.from("profiles").select("role,status").eq("id",session.user.id).maybeSingle().then(({data:p})=>setIsAdmin(p?.role==="admin"&&p?.status==="active"))}else {setUnread(0);setIsAdmin(false)}});
     return ()=>{mounted=false;window.clearInterval(timer);listener.subscription.unsubscribe()};
   },[supabase]);
 
@@ -64,7 +64,7 @@ export default function SiteHeader() {
       {ready&&!email&&<a className="header-login" href="/login">Войти</a>}
       {ready&&!email&&<a className="header-register" href="/register">Регистрация</a>}
       {email&&<a className="header-login header-chat-link" href="/chats"><span className="header-chat-icon"><img src="/icons/chat.svg" alt="" /></span><span>Чаты</span>{unread>0&&<b className="header-unread">{unread>99?"99+":unread}</b>}</a>}
-      {email&&<a className="header-login" href="/profile">Кабинет</a>}
+      {email&&<a className="header-login" href="/profile">Кабинет</a>}{email&&isAdmin&&<a className="header-login admin-header-link" href="/admin">Админка</a>}
       {email&&<a className="header-register" href="/services/new">Разместить услугу</a>}
       {email&&<button className="header-logout" onClick={logout}>Выйти</button>}
     </div>

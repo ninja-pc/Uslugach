@@ -18,7 +18,7 @@ export default function NewServicePage() {
   const [categoryId,setCategoryId]=useState(""); const [description,setDescription]=useState("");
   const [price,setPrice]=useState(""); const [priceType,setPriceType]=useState("fixed");
   const [region,setRegion]=useState(""); const [city,setCity]=useState(""); const [district,setDistrict]=useState(""); const [workFormat,setWorkFormat]=useState("onsite");
-  const [error,setError]=useState(""); const [loading,setLoading]=useState(false); const [checkingAuth,setCheckingAuth]=useState(true); const [userId,setUserId]=useState<string|null>(null);
+  const [images,setImages]=useState<File[]>([]); const [imageUrls,setImageUrls]=useState<string[]>([]);\n  const [error,setError]=useState(""); const [loading,setLoading]=useState(false); const [checkingAuth,setCheckingAuth]=useState(true); const [userId,setUserId]=useState<string|null>(null);
 
   useEffect(() => {
     async function load() {
@@ -37,10 +37,12 @@ export default function NewServicePage() {
     event.preventDefault(); setError(""); setLoading(true);
     const auth=await supabase.auth.getUser(); const user=auth.data.user;
     if (!user) { setLoading(false); router.push("/login?next=/services/new"); return; }
+    let uploadedUrls:string[]=[];
+    try { uploadedUrls=await uploadImages(user.id); } catch(e:any) { setError(e.message||"Не удалось загрузить фотографии."); setLoading(false); return; }
     const result=await supabase.from("services").insert({
       user_id:user.id, category_id:categoryId || null, title, slug:makeSlug(title), description,
       price:price ? Number(price) : null, price_type:priceType, region:region || null, city:city || null, district:district || null,
-      work_format:workFormat, status:"published"
+      work_format:workFormat, image_urls:uploadedUrls, status:"published"
     }).select("id").single();
     setLoading(false);
     if (result.error) { setError(result.error.message); return; }
@@ -59,10 +61,11 @@ export default function NewServicePage() {
     </section></main>;
 
   return <main className="page"><SiteHeader />
-    <section className="section narrow"><span className="eyebrow">Новая услуга</span><h1>Предложите свою услугу</h1><p>Заполните основные поля. Фотографии добавим следующим этапом.</p>
+    <section className="section narrow"><span className="eyebrow">Новая услуга</span><h1>Предложите свою услугу</h1><p>Заполните основные поля и добавьте до 10 фотографий. Первое фото станет главным.</p>
     <form className="form-card form-wide" onSubmit={submit}>
       <label>Название услуги<input value={title} onChange={e=>setTitle(e.target.value)} required maxLength={140} placeholder="Например, ремонт ванной комнаты" /></label>
       <label>Категория<select value={categoryId} onChange={e=>setCategoryId(e.target.value)} required><option value="">Выберите категорию</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
+      <label>Фотографии<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={e=>{const next=Array.from(e.target.files||[]).slice(0,10);setImages(next);setImageUrls(next.map(f=>URL.createObjectURL(f)));}} />{imageUrls.length>0&&<div className="upload-preview-grid">{imageUrls.map((url,i)=><div className="upload-preview" key={url}><img src={url} alt={"Фото "+(i+1)} /></div>)}</div>}</label>
       <label>Описание<textarea value={description} onChange={e=>setDescription(e.target.value)} required rows={7} maxLength={5000} placeholder="Что вы делаете и что входит в работу?" /></label>
       <div className="form-grid"><label>Цена<input type="number" min="0" step="0.01" value={price} onChange={e=>setPrice(e.target.value)} /></label>
       <label>Тип цены<select value={priceType} onChange={e=>setPriceType(e.target.value)}><option value="fixed">За работу</option><option value="hourly">За час</option><option value="negotiable">Договорная</option><option value="free">Бесплатно</option></select></label></div>
