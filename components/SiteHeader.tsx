@@ -3,10 +3,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { LOCATION_REGIONS } from "@/lib/locations";
 
 export default function SiteHeader() {
   const router=useRouter(); const supabase=createClient();
   const [email,setEmail]=useState<string|null>(null),[ready,setReady]=useState(false),[unread,setUnread]=useState(0);
+  const [city, setCity] = useState("Москва");
+  const [cityOpen, setCityOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const saved = window.sessionStorage.getItem("uslugach-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const enabled = saved ? saved === "dark" : prefersDark;
+    setDarkMode(enabled);
+    document.documentElement.classList.toggle("dark", enabled);
+  }, []);
+
+  function toggleTheme() {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.documentElement.classList.toggle("dark", next);
+    window.sessionStorage.setItem("uslugach-theme", next ? "dark" : "light");
+  }
 
   async function loadUnread(userId:string){
     const {data:cp}=await supabase.from("chat_participants").select("chat_id,last_read_at").eq("user_id",userId);
@@ -30,9 +49,17 @@ export default function SiteHeader() {
 
   return <header className="modern-header"><div className="header-main">
     <a className="brand" href="/"><img className="brand-mark" src="/icons/logo-mark.svg" alt="" /><span>Услугач</span></a>
-    <a className="location-pill" href="/services"><img src="/icons/location.svg" alt="" /><span>Москва</span><b>⌄</b></a>
+    <div className="city-picker">
+      <button className="location-pill" type="button" aria-haspopup="listbox" aria-expanded={cityOpen} onClick={() => setCityOpen((open) => !open)}>
+        <img src="/icons/location.svg" alt="" /><span>{city}</span><b aria-hidden="true">⌄</b>
+      </button>
+      {cityOpen && <div className="city-menu" role="listbox" aria-label="Выберите город">
+        {LOCATION_REGIONS.flatMap((region) => region.cities).map((option) => <button key={option} type="button" role="option" aria-selected={city === option} className={city === option ? "city-option selected" : "city-option"} onClick={() => { setCity(option); setCityOpen(false); }}>{option}</button>)}
+      </div>}
+    </div>
     <nav className="main-nav"><a href="/services">Услуги</a><a href="/requests">Заявки</a><a href="/services">Исполнители</a><a href="/profile">Кабинет</a></nav>
     <div className="header-actions">
+      <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={darkMode ? "Включить светлую тему" : "Включить тёмную тему"} title={darkMode ? "Светлая тема" : "Тёмная тема"}><span aria-hidden="true">{darkMode ? "☼" : "◐"}</span></button>
       <a className="header-search" href="/services" aria-label="Поиск"><img src="/icons/search.svg" alt="" /></a>
       {ready&&!email&&<a className="header-login" href="/login">Войти</a>}
       {ready&&!email&&<a className="header-register" href="/register">Регистрация</a>}

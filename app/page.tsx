@@ -102,125 +102,34 @@ export default function Home() {
   }, [supabase]);
 
   return (
-    <main>
+    <main className="bento-home">
       <SiteHeader />
-
-      <section className="home-hero">
-        <div className="hero-content">
-          <div className="hero-badges">
-            <span>Быстро</span><i>•</i><span>Надёжно</span><i>•</i><span>Рядом</span>
+      <section className="bento-grid bento-hero-wrap">
+        <div className="bento-card hero-card">
+          <div className="hero-content">
+            <div className="hero-badges"><span>Маркетплейс услуг</span><i>●</i><span>Москва и область</span></div>
+            <h1>Хорошие люди<br /><em>делают больше.</em></h1>
+            <p>Найдите проверенного специалиста для любой задачи — от ремонта до дизайна.</p>
+            <div className="hero-search"><div className="search-field"><img src="/icons/search.svg" alt="" /><input aria-label="Поиск услуги" placeholder="Что нужно сделать?" /></div><a className="hero-search-button" href="/services">Найти</a></div>
+            <div className="hero-actions"><a className="button" href="/requests/new">Мне нужна услуга <span>↗</span></a><a className="text-link" href="/services">Смотреть каталог <span>→</span></a></div>
           </div>
-          <h1>Найдите специалиста<br />для любой задачи</h1>
-          <p>Услуги от исполнителей рядом с вами.<br />Выбирайте специалиста, общайтесь и договаривайтесь напрямую.</p>
-
-          <div className="hero-search">
-            <div className="search-field">
-              <img src="/icons/search.svg" alt="" />
-              <input aria-label="Поиск услуги" placeholder="Что нужно сделать?" />
-            </div>
-            <a className="location-field" href="/services">
-              <img src="/icons/location.svg" alt="" /> Москва <b>⌄</b>
-            </a>
-            <a className="hero-search-button" href="/services">Найти</a>
-          </div>
-
-          <div className="hero-actions">
-            <a className="button" href="/services/new">Разместить услугу</a>
-            <a className="button secondary" href="/requests/new">Мне нужна услуга →</a>
-          </div>
+          <div className="hero-art" aria-hidden="true"><img src="/illustrations/hero.svg" alt="" /></div>
         </div>
-
-        <div className="hero-art" aria-hidden="true">
-          <img src="/illustrations/hero.svg" alt="" />
-        </div>
+        <a className="bento-card join-card" href="/services/new"><span className="card-kicker">Для специалистов</span><strong>Покажите,<br />что вы умеете</strong><span className="round-arrow">↗</span><div className="join-orb">+</div></a>
+        <a className="bento-card request-card" href="/requests"><span className="card-kicker">Заявки рядом</span><strong>Кто-то уже<br />ищет вас</strong><span className="request-count">24 <small>новые заявки</small></span><span className="round-arrow">↗</span></a>
       </section>
-
-      <section className="category-strip">
-        {categories.map((category) => (
-          <a className={"category-tile " + category.tone} href="/services" key={category.name}>
-            <img className="category-illustration" src={category.image} alt="" />
-            <span className="category-name">{category.name}</span>
-            <span className="category-arrow">→</span>
-          </a>
-        ))}
+      <section className="mobile-banner-grid" aria-label="Быстрые действия">
+        <a className="mobile-banner mobile-banner-specialist" href="/services/new">
+          <span><small>Для специалистов</small><strong>Разместить услугу</strong></span><b aria-hidden="true">↗</b>
+        </a>
+        <a className="mobile-banner mobile-banner-request" href="/requests">
+          <span><small>Заявки рядом</small><strong>Найти заказ</strong></span><b aria-hidden="true">↗</b>
+        </a>
       </section>
-
-      <section className="content-section popular-layout">
-        <div>
-          <div className="section-head">
-            <div>
-              <span className="eyebrow">Каталог</span>
-              <h2>Последние услуги</h2>
-            </div>
-            <a href="/services" className="see-all">Смотреть все →</a>
-          </div>
-
-          {loading ? (
-            <div className="service-preview-grid">
-              {[1, 2].map((item) => <div className="preview-card preview-skeleton" key={item}><div className="skeleton-image" /></div>)}
-            </div>
-          ) : services.length === 0 ? (
-            <div className="empty">
-              <strong>Пока нет опубликованных услуг</strong>
-              <p>Станьте первым исполнителем — разместите свою услугу.</p>
-              <a className="button" href="/services/new">Разместить услугу</a>
-            </div>
-          ) : (
-            <div className="service-preview-grid">
-              {services.slice(0, 4).map((service) => {
-                const category = service.category_id ? categoryMap[service.category_id] : undefined;
-                const provider = profiles[service.user_id]?.display_name || "Исполнитель";
-                return (
-                  <a className="preview-card" href={"/service?id=" + service.id} key={service.id}>
-                    <div className="preview-image">
-                      <img src={illustrationFor(service, category)} alt="" />
-                      <span className="favorite" aria-label="В избранное">
-                        <img src="/icons/heart.svg" alt="" />
-                      </span>
-                    </div>
-                    <div className="service-category">{category?.name || "Услуга"}</div>
-                    <h3>{service.title}</h3>
-                    <p>{service.description || "Описание услуги пока не добавлено."}</p>
-                    <div className="provider">
-                      <span className="avatar">{provider.slice(0, 1).toUpperCase()}</span>
-                      <span>
-                        <strong>{provider}</strong>
-                        <small>{service.city || service.region || "Россия"}</small>
-                      </span>
-                    </div>
-                    <strong className="price">{formatPrice(service.price, service.price_type)}</strong>
-                  </a>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        <aside className="why-card">
-          <span className="eyebrow">Услугач</span>
-          <h2>Всё необходимое<br />в одном месте</h2>
-          <div className="benefits">
-            <div className="benefit"><span>01</span><div><strong>Реальные услуги</strong><small>На главной показываем только опубликованные предложения.</small></div></div>
-            <div className="benefit"><span>02</span><div><strong>Прямой контакт</strong><small>Откройте услугу и свяжитесь с исполнителем.</small></div></div>
-            <div className="benefit"><span>03</span><div><strong>Поиск рядом</strong><small>Город и регион помогают найти специалиста поблизости.</small></div></div>
-          </div>
-          <a className="button wide" href="/services">Открыть каталог</a>
-        </aside>
-      </section>
-
-      <section className="city-banner">
-        <div>
-          <span className="city-pin"><img src="/icons/location.svg" alt="" /></span>
-          <div><span className="eyebrow">География</span><h2>Услуги в вашем городе</h2></div>
-        </div>
-        <a href="/services">Все города →</a>
-      </section>
-
-      <footer className="modern-footer">
-        <div><a className="logo" href="/"><img src="/icons/logo-mark.svg" alt="" />Услугач</a><span>Маркетплейс услуг рядом с вами</span></div>
-        <div><a href="/services">Каталог</a><a href="/profile">Личный кабинет</a><a href="/register">Регистрация</a></div>
-        <small>© Услугач · MVP 1.0</small>
-      </footer>
+      <section className="bento-grid category-bento"><div className="section-intro"><span className="eyebrow">Выберите направление</span><h2>Найдётся<br /><em>своё.</em></h2><a className="text-link" href="/services">Все категории →</a></div>{categories.slice(0, 6).map((category, index) => <a className={"bento-card category-tile " + category.tone + " cat-" + index} href="/services" key={category.name}><img className="category-illustration" src={category.image} alt="" /><span className="category-name">{category.name}</span><span className="category-arrow">↗</span></a>)}</section>
+      <section className="content-section bento-services"><div className="section-head"><div><span className="eyebrow">Свежие предложения</span><h2>Услуги, которые<br /><em>выбирают сейчас</em></h2></div><a href="/services" className="text-link">Смотреть все →</a></div>{loading ? <div className="service-preview-grid">{[1, 2, 3].map((item) => <div className="preview-card preview-skeleton" key={item}><div className="skeleton-image" /></div>)}</div> : services.length === 0 ? <div className="empty"><strong>Пока нет опубликованных услуг</strong><p>Станьте первым исполнителем — разместите свою услугу.</p><a className="button" href="/services/new">Разместить услугу</a></div> : <div className="service-preview-grid">{services.slice(0, 4).map((service) => { const category = service.category_id ? categoryMap[service.category_id] : undefined; const provider = profiles[service.user_id]?.display_name || "Исполнитель"; return <a className="preview-card" href={"/service?id=" + service.id} key={service.id}><div className="preview-image"><img src={illustrationFor(service, category)} alt="" /><span className="favorite" aria-label="В избранное"><img src="/icons/heart.svg" alt="" /></span></div><div className="service-category">{category?.name || "Услуга"}</div><h3>{service.title}</h3><p>{service.description || "Описание услуги пока не добавлено."}</p><div className="provider"><span className="avatar">{provider.slice(0, 1).toUpperCase()}</span><span><strong>{provider}</strong><small>{service.city || service.region || "Россия"}</small></span></div><strong className="price">{formatPrice(service.price, service.price_type)}</strong></a>; })}</div>}</section>
+      <section className="bento-footer"><div><span className="eyebrow">Услугач</span><h2>Делайте жизнь<br /><em>проще.</em></h2></div><div className="footer-cta"><p>Всё необходимое —<br />в одном месте.</p><a className="button" href="/services">Открыть каталог ↗</a></div></section>
+      <footer className="modern-footer"><div><a className="logo" href="/"><img src="/icons/logo-mark.svg" alt="" />Услугач</a><span>Маркетплейс услуг рядом с вами</span></div><div><a href="/services">Каталог</a><a href="/profile">Личный кабинет</a><a href="/register">Регистрация</a></div><small>© Услугач · MVP 1.0</small></footer>
     </main>
   );
 }
