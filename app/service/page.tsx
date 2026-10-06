@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import SiteHeader from "@/components/SiteHeader";
 
-type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;district:string|null;region:string|null;work_format:string;category_id:number|null;provider_name:string;bio:string|null};
+type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;district:string|null;region:string|null;work_format:string;category_id:string|null;provider_name:string;bio:string|null};
 type Similar={id:string;user_id:string;title:string;description:string|null;price:number|null;price_type:string|null;city:string|null;work_format:string|null};
 type Review={id:string;author_id:string;rating:number;body:string|null;created_at:string;author_name:string};
 const supabase=createClient();
@@ -13,12 +13,13 @@ function imageFor(s:{title:string;description?:string|null}){const t=(s.title+" 
 function price(v:number|null,t:string|null){if(v==null)return "Цена по договорённости";return new Intl.NumberFormat("ru-RU").format(v)+" ₽"+(t==="hourly"?" / час":"")}
 
 export default function ServicePage(){
- const [service,setService]=useState<Service|null>(null);const [similar,setSimilar]=useState<Similar[]>([]);const [reviews,setReviews]=useState<Review[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [contacting,setContacting]=useState(false);const [contactError,setContactError]=useState("");
+ const [service,setService]=useState<Service|null>(null);const [similar,setSimilar]=useState<Similar[]>([]);const [reviews,setReviews]=useState<Review[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [contacting,setContacting]=useState(false);const [contactError,setContactError]=useState("");const [favorite,setFavorite]=useState(false);
  useEffect(()=>{async function load(){const id=new URLSearchParams(window.location.search).get("id");if(!id){setError("Услуга не найдена.");setLoading(false);return}
   const result=await supabase.from("services").select("id,user_id,title,description,price,price_type,city,district,region,work_format,category_id").eq("id",id).eq("status","published").maybeSingle();
   if(result.error||!result.data){setError(result.error?"Не удалось загрузить услугу.":"Услуга не найдена или снята с публикации.");setLoading(false);return}
   const profile=await supabase.from("profiles").select("display_name,bio").eq("id",result.data.user_id).maybeSingle();
   setService({...result.data,provider_name:profile.data?.display_name||"Исполнитель",bio:profile.data?.bio||null} as Service);
+  const {data:auth}=await supabase.auth.getUser(); if(auth.user){const {data:fav}=await supabase.from("favorites").select("service_id").eq("user_id",auth.user.id).eq("service_id",id).maybeSingle();setFavorite(!!fav);}
   let query=supabase.from("services").select("id,user_id,title,description,price,price_type,city,work_format").eq("status","published").neq("id",id).limit(4);
   if(result.data.category_id) query=query.eq("category_id",result.data.category_id);
   let rel=await query.order("created_at",{ascending:false});
@@ -31,6 +32,8 @@ export default function ServicePage(){
   setReviews((reviewRows||[]).map((r:any)=>({...r,author_name:authorMap[r.author_id]||"Пользователь"})));
   setLoading(false);
  }load()},[]);
+
+ async function toggleFavorite(){if(!service)return;const {data:u}=await supabase.auth.getUser();if(!u.user){window.location.href="/login?next="+encodeURIComponent("/service?id="+service.id);return}if(favorite){await supabase.from("favorites").delete().eq("user_id",u.user.id).eq("service_id",service.id);setFavorite(false)}else{const {error:e}=await supabase.from("favorites").insert({user_id:u.user.id,service_id:service.id});if(!e)setFavorite(true)}}
 
  async function startChat(){
    if(!service)return;
@@ -64,14 +67,14 @@ export default function ServicePage(){
    <div className="service-breadcrumb"><a href="/services">Каталог</a><span>/</span><span>{service.city||service.region||"Россия"}</span><span>/</span><strong>{service.title}</strong></div>
    <div className="service-detail-new">
     <article className="service-main-new">
-     <div className="service-visual"><img src={imageFor(service)} alt="" /><span className="service-save"><img src="/icons/heart.svg" alt="" /></span></div>
+     <div className="service-visual"><img src={imageFor(service)} alt="" /><button type="button" className={"service-save"+(favorite?" is-favorite":"")} onClick={toggleFavorite} aria-label={favorite?"Убрать из избранного":"Добавить в избранное"}><img src="/icons/heart.svg" alt="" /></button></div>
      <div className="service-content"><span className="eyebrow">Предложение услуги</span><h1>{service.title}</h1><div className="detail-chips"><span>{service.city||"Онлайн"}</span><span>{format}</span>{service.region&&<span>{service.region}</span>}</div>
       <p className="service-description">{service.description||"Исполнитель пока не добавил подробное описание этой услуги."}</p>
       <div className="service-facts"><div><small>Стоимость</small><strong>{price(service.price,service.price_type)}</strong></div><div><small>Формат работы</small><strong>{format}</strong></div><div><small>Локация</small><strong>{service.city||service.region||"Онлайн"}</strong></div></div>
       <div className="service-note"><strong>Перед заказом</strong><span>Уточните сроки, итоговую стоимость и детали работы напрямую с исполнителем.</span></div>
      </div>
     </article>
-    <aside className="service-side"><div className="provider-card-new"><span className="eyebrow">Исполнитель</span><div className="provider-big"><span>{service.provider_name.slice(0,1).toUpperCase()}</span><div><h2>{service.provider_name}</h2><small>{service.city||service.region||"Россия"}</small></div></div><p>{service.bio||"Исполнитель пока не добавил описание профиля."}</p><button className="button wide" onClick={startChat} disabled={contacting}>{contacting?"Открываем чат…":"Написать исполнителю"}</button>{contactError&&<div className="form-error">{contactError}</div>}<a className="side-link" href="/profile">Открыть кабинет →</a></div>
+    <aside className="service-side"><div className="provider-card-new"><span className="eyebrow">Исполнитель</span><div className="provider-big"><span>{service.provider_name.slice(0,1).toUpperCase()}</span><div><h2>{service.provider_name}</h2><small>{service.city||service.region||"Россия"}</small></div></div><p>{service.bio||"Исполнитель пока не добавил описание профиля."}</p><button className="button wide" onClick={startChat} disabled={contacting}>{contacting?"Открываем чат…":"Написать исполнителю"}</button>{contactError&&<div className="form-error">{contactError}</div>}<a className="side-link" href={"/user?id="+service.user_id}>Открыть профиль исполнителя →</a><a className="side-link danger-link" href={"/complaint?service_id="+service.id}>Пожаловаться на объявление →</a></div>
      <div className="trust-card"><strong>Что обсудить до заказа</strong><div><span>01</span>Задачу и ожидаемый результат</div><div><span>02</span>Цену и сроки выполнения</div><div><span>03</span>Формат связи и место работы</div></div></aside>
    </div>
    {reviews.length>0&&<section className="service-reviews"><div className="section-head"><div><span className="eyebrow">Отзывы клиентов</span><h2>Что говорят о работе</h2></div><div className="reviews-summary"><strong>{(reviews.reduce((a,r)=>a+r.rating,0)/reviews.length).toFixed(1)}</strong><span>★ · {reviews.length} {reviews.length===1?"отзыв":"отзывов"}</span></div></div><div className="review-list">{reviews.map(r=><article className="review-card" key={r.id}><div className="review-card-head"><div className="avatar">{r.author_name.slice(0,1).toUpperCase()}</div><div><strong>{r.author_name}</strong><small>{new Date(r.created_at).toLocaleDateString("ru-RU")}</small></div><span className="review-rating">{"★".repeat(r.rating)}<i>{"★".repeat(5-r.rating)}</i></span></div>{r.body&&<p>{r.body}</p>}</article>)}</div></section>}

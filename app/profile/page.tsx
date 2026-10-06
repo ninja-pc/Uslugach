@@ -19,6 +19,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false); const [loading, setLoading] = useState(true);
   const [services,setServices] = useState<Service[]>([]);
   const [requests,setRequests] = useState<Request[]>([]);
+  const [favorites,setFavorites] = useState<any[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -28,11 +29,14 @@ export default function ProfilePage() {
       const [result, servicesResult, requestsResult] = await Promise.all([
         supabase.from("profiles").select("display_name,bio,region,city,district,phone").eq("id", user.id).maybeSingle(),
         supabase.from("services").select("id,title,description,price,price_type,city,status").eq("user_id", user.id).order("created_at",{ascending:false}),
-        supabase.from("requests").select("id,title,description,budget,city,deadline,status").eq("user_id", user.id).order("created_at",{ascending:false})
+        supabase.from("requests").select("id,title,description,budget,city,deadline,status").eq("user_id", user.id).order("created_at",{ascending:false}),
+        supabase.from("favorites").select("service_id,created_at").eq("user_id", user.id).order("created_at",{ascending:false})
       ]);
       if (result.data) setProfile(result.data);
       setServices((servicesResult.data||[]) as Service[]);
       setRequests((requestsResult.data||[]) as Request[]);
+      const favoriteRows=favoritesResult.data||[];
+      if(favoriteRows.length){const ids=favoriteRows.map((x:any)=>x.service_id);const {data:fs}=await supabase.from("services").select("id,title,description,price,price_type,city,status,user_id").in("id",ids);const order:any={};favoriteRows.forEach((x:any,i:number)=>order[x.service_id]=i);setFavorites((fs||[]).sort((a:any,b:any)=>order[a.id]-order[b.id]));}else setFavorites([]);
       setLoading(false);
     }
     load();
@@ -59,6 +63,7 @@ export default function ProfilePage() {
     </section><section className="cabinet-list-card"><div className="cabinet-list-head"><div><span className="eyebrow">Мои задачи</span><h2>Заявки</h2></div><a href="/requests/new">＋ Создать</a></div>
       {requests.length===0?<div className="cabinet-empty"><strong>Пока нет заявок</strong><span>Создайте заявку, если вам нужен специалист.</span><a className="button secondary" href="/requests/new">Создать заявку</a></div>:<div className="cabinet-items">{requests.map(r=><div className="cabinet-item" key={r.id}><div className="cabinet-item-art request-art"><img src="/illustrations/hero.svg" alt="" /></div><div className="cabinet-item-main"><span className="item-status">{r.status}</span><h3>{r.title}</h3><p>{r.description||"Без описания"}</p><small>{r.city||"Город не указан"}{r.deadline?" · до "+new Date(r.deadline).toLocaleDateString("ru-RU"):""}</small></div><strong className="cabinet-item-price">{r.budget==null?"Бюджет не указан":new Intl.NumberFormat("ru-RU").format(r.budget)+" ₽"}</strong></div>)}</div>}
     </section></div>
+    <section className="cabinet-list-card cabinet-favorites"><div className="cabinet-list-head"><div><span className="eyebrow">Избранное</span><h2>Сохранённые услуги</h2></div><a href="/services">Каталог →</a></div>{favorites.length===0?<div className="cabinet-empty"><strong>Избранное пока пусто</strong><span>Сохраняйте понравившиеся услуги кнопкой с сердцем.</span></div>:<div className="cabinet-items">{favorites.map((s:any)=><a className="cabinet-item" href={"/service?id="+s.id} key={s.id}><div className="cabinet-item-art"><img src="/illustrations/other.svg" alt="" /></div><div className="cabinet-item-main"><span className="item-status published">Сохранено</span><h3>{s.title}</h3><p>{s.description||"Без описания"}</p><small>{s.city||"Город не указан"}</small></div><strong className="cabinet-item-price">{s.price==null?"По договорённости":new Intl.NumberFormat("ru-RU").format(s.price)+" ₽"}</strong></a>)}</div>}</section>
     <form className="form-card form-wide cabinet-form" onSubmit={save}>
       <label>Email<input value={email} disabled /></label>
       <label>Имя<input value={profile.display_name || ""} onChange={e => setProfile({...profile,display_name:e.target.value})} required maxLength={80} /></label>

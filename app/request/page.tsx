@@ -17,6 +17,7 @@ export default function RequestDetailPage() {
   const [sending,setSending]=useState(false);
   const [error,setError]=useState("");
   const [startingChat,setStartingChat]=useState<string|null>(null);
+  const [actionBusy,setActionBusy]=useState(false);
 
   async function load(currentId:string|null){
     if(!currentId){setLoading(false);return;}
@@ -33,6 +34,9 @@ export default function RequestDetailPage() {
     setId(currentId);
     load(currentId);
   },[]);
+
+  async function closeRequest(){if(!request||!isOwner)return;setActionBusy(true);setError("");const {error:e}=await supabase.from("requests").update({status:"closed"}).eq("id",request.id).eq("user_id",me.id);if(e)setError(e.message);else await load(request.id);setActionBusy(false)}
+  async function rejectResponse(responseId:string){if(!isOwner)return;setActionBusy(true);setError("");const {error:e}=await supabase.from("responses").update({status:"rejected"}).eq("id",responseId);if(e)setError(e.message);else await load(request.id);setActionBusy(false)}
 
   async function openChat(response:any){
     if(!me||!request)return;
@@ -71,10 +75,10 @@ export default function RequestDetailPage() {
     <div className="detail-layout"><div>
       <section className="content-card"><h2>Что нужно сделать</h2><p className="detail-description">{request.description}</p><div className="facts-grid"><div><span>Бюджет</span><strong>{request.budget?Number(request.budget).toLocaleString("ru-RU")+" ₽":"По договорённости"}</strong></div><div><span>Срок</span><strong>{request.deadline?new Date(request.deadline).toLocaleDateString("ru-RU"):"Обсуждается"}</strong></div></div></section>
       <section className="content-card"><h2>Отклики специалистов <span className="count-badge">{responses.length}</span></h2>
-      {responses.length===0?<div className="mini-empty">Пока никто не откликнулся. Если вы специалист — станьте первым.</div>:<div className="response-list">{responses.map(r=><article className="response-item" key={r.id}><div className="avatar">{(r.profile?.display_name||"С").slice(0,1).toUpperCase()}</div><div><strong>{r.profile?.display_name||"Специалист"}</strong><span className="muted">{r.profile?.city||r.profile?.region||""}</span><p>{r.message}</p>{r.price&&<b>{Number(r.price).toLocaleString("ru-RU")} ₽</b>}{isOwner&&<div className="response-actions"><button className="primary-btn small-btn" disabled={startingChat===r.id||r.status==="accepted"} onClick={()=>openChat(r)}>{startingChat===r.id?"Открываем…":r.status==="accepted"?"Исполнитель выбран":"Выбрать и написать"}</button></div>}</div></article>)}</div>}
+      {responses.length===0?<div className="mini-empty">Пока никто не откликнулся. Если вы специалист — станьте первым.</div>:<div className="response-list">{responses.map(r=><article className="response-item" key={r.id}><div className="avatar">{(r.profile?.display_name||"С").slice(0,1).toUpperCase()}</div><div><strong>{r.profile?.display_name||"Специалист"}</strong><span className="muted">{r.profile?.city||r.profile?.region||""}</span><p>{r.message}</p>{r.price&&<b>{Number(r.price).toLocaleString("ru-RU")} ₽</b>}{isOwner&&<div className="response-actions"><button className="primary-btn small-btn" disabled={startingChat===r.id||r.status==="accepted"||r.status==="rejected"||request.status==="closed"} onClick={()=>openChat(r)}>{startingChat===r.id?"Открываем…":r.status==="accepted"?"Исполнитель выбран":r.status==="rejected"?"Отклонён":"Выбрать и написать"}</button>{isOwner&&r.status==="pending"&&<button type="button" className="secondary-btn small-btn" disabled={actionBusy} onClick={()=>rejectResponse(r.id)}>Отклонить</button>}</div>}</div></article>)}</div>}
       </section>
     </div><aside>
-      <section className="content-card sticky-card"><h3>Заказчик</h3><div className="provider-row"><div className="avatar">{(owner?.display_name||"З").slice(0,1).toUpperCase()}</div><div><strong>{owner?.display_name||"Заказчик"}</strong><span>{owner?.city||owner?.region||""}</span></div></div>{owner?.bio&&<p>{owner.bio}</p>}</section>
+      <section className="content-card sticky-card"><h3>Заказчик</h3><div className="provider-row"><div className="avatar">{(owner?.display_name||"З").slice(0,1).toUpperCase()}</div><div><strong>{owner?.display_name||"Заказчик"}</strong><span>{owner?.city||owner?.region||""}</span></div></div>{owner?.bio&&<p>{owner.bio}</p>}{isOwner&&request.status==="published"&&<button type="button" className="secondary-btn full-action" disabled={actionBusy} onClick={closeRequest}>Закрыть заявку</button>}{!isOwner&&<a className="side-link danger-link" href={"/complaint?request_id="+request.id}>Пожаловаться на заявку →</a>}</section>
       {!isOwner&&<section className="content-card response-form-card"><h3>Откликнуться</h3>{!me&&<p>Войдите, чтобы предложить свои услуги.</p>}<form onSubmit={send}><label>Ваше предложение<textarea rows={5} value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="Расскажите о своём опыте и как выполните задачу" /></label><label>Ваша цена, ₽<input type="number" min="0" value={form.price} onChange={e=>setForm({...form,price:e.target.value})} placeholder="Можно оставить пустым" /></label>{error&&<div className="form-error">{error}</div>}<button className="primary-btn" disabled={sending}>{sending?"Отправляем…":"Отправить отклик"}</button></form></section>}
     </aside></div>
   </main></>;

@@ -1,0 +1,13 @@
+"use client";
+import {FormEvent,useEffect,useState} from "react";
+import {useRouter} from "next/navigation";
+import Link from "next/link";
+import {createClient} from "@/lib/supabase/client";
+import SiteHeader from "@/components/SiteHeader";
+const supabase=createClient();
+export default function ComplaintPage(){
+ const router=useRouter();const [user,setUser]=useState<any>(null),[serviceId,setServiceId]=useState<string|null>(null),[requestId,setRequestId]=useState<string|null>(null),[reason,setReason]=useState("Нарушение правил"),[details,setDetails]=useState(""),[loading,setLoading]=useState(true),[sending,setSending]=useState(false),[error,setError]=useState("");
+ useEffect(()=>{(async()=>{const {data}=await supabase.auth.getUser();if(!data.user){router.replace("/login?next="+encodeURIComponent(window.location.pathname+window.location.search));return}setUser(data.user);const q=new URLSearchParams(window.location.search);setServiceId(q.get("service_id"));setRequestId(q.get("request_id"));setLoading(false)})()},[]);
+ async function submit(e:FormEvent){e.preventDefault();if(!user)return;if(!serviceId&&!requestId){setError("Не указан объект жалобы.");return}setSending(true);setError("");const {error:e2}=await supabase.from("complaints").insert({user_id:user.id,service_id:serviceId,request_id:requestId,reason,details:details.trim()||null});if(e2)setError(e2.message);else router.push("/profile?complaint=sent");setSending(false)}
+ if(loading)return <><SiteHeader/><main className="page-shell"><div className="empty-state">Загрузка…</div></main></>;
+ return <><SiteHeader/><main className="page-shell complaint-page"><div className="breadcrumbs"><Link href="/services">Каталог</Link><span>/</span><span>Жалоба</span></div><section className="complaint-head"><span className="eyebrow">Безопасность</span><h1>Сообщить о проблеме</h1><p>Опишите, что нарушает правила. Жалоба попадёт на рассмотрение.</p></section><form className="form-card" onSubmit={submit}><label>Причина<select value={reason} onChange={e=>setReason(e.target.value)}><option>Нарушение правил</option><option>Спам или реклама</option><option>Обман или мошенничество</option><option>Оскорбления</option><option>Неверная информация</option><option>Другое</option></select></label><label>Подробности<textarea rows={7} maxLength={1500} value={details} onChange={e=>setDetails(e.target.value)} placeholder="Что произошло? Укажите факты и детали."/></label>{error&&<div className="form-error">{error}</div>}<button className="primary-btn" disabled={sending}>{sending?"Отправляем…":"Отправить жалобу"}</button></form></main></>}
