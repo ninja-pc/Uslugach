@@ -188,3 +188,16 @@ html{background:var(--bg)}body{background:radial-gradient(circle at 8% 0,rgba(13
 .admin-header-link{font-weight:700}
 @media(max-width:900px){.admin-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.upload-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.service-photo-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.request-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-head{align-items:start;flex-direction:column}.admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-row{align-items:flex-start;flex-direction:column}.admin-row-actions{justify-content:flex-start}.admin-row select{width:100%}.admin-category-create{grid-template-columns:1fr}.admin-page{padding-bottom:40px}}
+
+.notifications-page{padding-bottom:72px}
+.notifications-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin:34px 0 20px}
+.notifications-head h1{margin:4px 0 8px;font-size:clamp(34px,5vw,56px);letter-spacing:-.04em}
+.notifications-head p{margin:0;color:var(--muted,#6d7485)}
+.notifications-list{max-width:900px;display:grid;gap:10px}
+.notification-row{display:flex;align-items:center;gap:14px;padding:16px 18px;border:1px solid var(--line,#e7eaf1);border-radius:20px;background:var(--surface,#fff);cursor:pointer}
+.notification-row.unread{box-shadow:0 12px 30px rgba(31,38,60,.07)}
+.notification-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--surface-soft,#f4f6fb);flex:0 0 auto}
+.notification-icon img{width:20px;height:20px}
+.notification-copy{min-width:0;flex:1}.notification-copy strong{display:block}.notification-copy p{margin:5px 0;color:var(--muted,#6d7485);overflow-wrap:anywhere}.notification-copy small{color:var(--muted,#6d7485)}
+.notification-dot{width:9px;height:9px;border-radius:50%;background:#5d4df4;flex:0 0 auto}
+@media(max-width:600px){.notifications-head{align-items:start;flex-direction:column}.notifications-head .secondary-btn{width:100%}.notifications-page{padding-bottom:40px}}
