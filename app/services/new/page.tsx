@@ -18,7 +18,8 @@ export default function NewServicePage() {
   const [categoryId,setCategoryId]=useState(""); const [description,setDescription]=useState("");
   const [price,setPrice]=useState(""); const [priceType,setPriceType]=useState("fixed");
   const [region,setRegion]=useState(""); const [city,setCity]=useState(""); const [district,setDistrict]=useState(""); const [workFormat,setWorkFormat]=useState("onsite");
-  const [images,setImages]=useState<File[]>([]); const [imageUrls,setImageUrls]=useState<string[]>([]);\n  const [error,setError]=useState(""); const [loading,setLoading]=useState(false); const [checkingAuth,setCheckingAuth]=useState(true); const [userId,setUserId]=useState<string|null>(null);
+  const [images,setImages]=useState<File[]>([]); const [imageUrls,setImageUrls]=useState<string[]>([]);
+  const [error,setError=useState(""); const [loading,setLoading]=useState(false); const [checkingAuth,setCheckingAuth]=useState(true); const [userId,setUserId]=useState<string|null>(null);
 
   useEffect(() => {
     async function load() {
