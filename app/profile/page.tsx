@@ -26,7 +26,7 @@ export default function ProfilePage() {
       const auth = await supabase.auth.getUser(); const user = auth.data.user;
       if (!user) { router.replace("/login"); return; }
       setEmail(user.email || "");
-      const [result, servicesResult, requestsResult] = await Promise.all([
+      const [result, servicesResult, requestsResult, favoritesResult] = await Promise.all([
         supabase.from("profiles").select("display_name,bio,region,city,district,phone").eq("id", user.id).maybeSingle(),
         supabase.from("services").select("id,title,description,price,price_type,city,status").eq("user_id", user.id).order("created_at",{ascending:false}),
         supabase.from("requests").select("id,title,description,budget,city,deadline,status").eq("user_id", user.id).order("created_at",{ascending:false}),
