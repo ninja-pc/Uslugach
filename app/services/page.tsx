@@ -18,6 +18,7 @@ export default function ServicesPage() {
   const [categories,setCategories]=useState<Category[]>([]);
   const [categoryFilter,setCategoryFilter]=useState("");
   const [favorites,setFavorites]=useState<Set<string>>(new Set());
+  const [region,setRegion]=useState(""); const [city,setCity]=useState(""); const [workFormat,setWorkFormat]=useState(""); const [minPrice,setMinPrice]=useState(""); const [maxPrice,setMaxPrice]=useState(""); const [sort,setSort]=useState("newest"); const [filtersOpen,setFiltersOpen]=useState(false);
 
   useEffect(()=>{
     let cancelled=false;
@@ -56,11 +57,12 @@ export default function ServicesPage() {
   },[]);
 
   const selectedCategory=categories.find(c=>c.slug===categoryFilter);
-  const filtered=services.filter(s=>{
+  const cities=getCities(region);
+  const filtered=[...services].filter(s=>{
     const matchesText=(s.title+" "+s.description+" "+(s.city||"")+" "+(s.region||"")).toLowerCase().includes(search.toLowerCase());
     const matchesCategory=!selectedCategory||s.category_id===selectedCategory.id;
-    return matchesText&&matchesCategory;
-  });
+    return matchesText&&matchesCategory&&(!region||s.region===region)&&(!city||s.city===city)&&(!workFormat||s.work_format===workFormat)&&(!minPrice||(s.price!==null&&s.price>=Number(minPrice)))&&(!maxPrice||(s.price!==null&&s.price<=Number(maxPrice)));
+  }).sort((a,b)=>sort==="price_asc"?(a.price??Infinity)-(b.price??Infinity):sort==="price_desc"?(b.price??-1)-(a.price??-1):0);
 
   async function toggleFavorite(serviceId:string){
     const auth=await supabase.auth.getUser();
