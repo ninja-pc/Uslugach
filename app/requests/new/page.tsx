@@ -95,7 +95,8 @@ export default function NewRequestPage() {
         district: form.district.trim() || null,
         deadline: form.deadline || null,
         urgency: form.urgency,
-        status: "published",\n        image_urls: uploadedUrls,
+        status: "published",
+        image_urls: uploadedUrls,
       })
       .select("id")
       .single();
