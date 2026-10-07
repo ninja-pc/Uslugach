@@ -32,6 +32,6 @@ export default function RequestsPage() {
       <div className="card-body"><div className="card-meta"><span>{r.city||r.region||"Россия"}</span>{r.urgency!=="normal"&&<span className="accent-chip">Срочно</span>}</div>
       <h3>{r.title}</h3><p>{r.description}</p>
       <div className="card-footer"><strong>{r.budget ? "до "+Number(r.budget).toLocaleString("ru-RU")+" ₽" : "Бюджет по договорённости"}</strong><span>{profiles[r.user_id]?.display_name||"Заказчик"}</span></div></div></Link>)}</div>}
-  </main><style jsx>{\`
+  </main><style jsx>{`
 .filter-toggle{margin:8px 0 12px}.filter-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:16px;margin-bottom:16px;border:1px solid #e7eaf1;border-radius:20px;background:#fff;box-shadow:0 10px 28px rgba(35,43,74,.05)}.filter-panel label{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:750;color:#667188}.filter-panel input,.filter-panel select{width:100%;min-height:42px;border:1px solid #e2e6ef;border-radius:12px;padding:0 11px;background:#fbfcff;color:#24314b;outline:0}.filter-panel input:focus,.filter-panel select:focus{border-color:#716bff}.filter-reset{align-self:end}@media(max-width:760px){.filter-panel{grid-template-columns:1fr 1fr}}@media(max-width:500px){.filter-panel{grid-template-columns:1fr}}`}</style></>;
 }
