@@ -14,12 +14,20 @@ export default function SiteHeader() {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
+    const savedCity = window.localStorage.getItem("uslugach-city");
+    if (savedCity) setCity(savedCity);
     const saved = window.sessionStorage.getItem("uslugach-theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const enabled = saved ? saved === "dark" : prefersDark;
     setDarkMode(enabled);
     document.documentElement.classList.toggle("dark", enabled);
   }, []);
+
+  function selectCity(nextCity:string) {
+    setCity(nextCity);
+    window.localStorage.setItem("uslugach-city", nextCity);
+    setCityOpen(false);
+  }
 
   function toggleTheme() {
     const next = !darkMode;
@@ -38,7 +46,7 @@ export default function SiteHeader() {
   }
 
   async function loadNotifications(userId:string){
-    const {data}=await supabase.from("notifications").select("id").eq("user_id",userId).eq("read",false);
+    const {data}=await supabase.from("notifications").select("id").eq("user_id",userId).is("read_at",null);
     setNotifications((data||[]).length);
   }
 
@@ -98,7 +106,7 @@ export default function SiteHeader() {
         <img src="/icons/location.svg" alt="" /><span>{city}</span><b aria-hidden="true">⌄</b>
       </button>
       {cityOpen && <div className="city-menu" role="listbox" aria-label="Выберите город">
-        {LOCATION_REGIONS.flatMap((region) => region.cities).map((option) => <button key={option} type="button" role="option" aria-selected={city === option} className={city === option ? "city-option selected" : "city-option"} onClick={() => { setCity(option); setCityOpen(false); }}>{option}</button>)}
+        {LOCATION_REGIONS.flatMap((region) => region.cities).map((option) => <button key={option} type="button" role="option" aria-selected={city === option} className={city === option ? "city-option selected" : "city-option"} onClick={() => selectCity(option)}>{option}</button>)}
       </div>}
     </div>
     <nav className="main-nav"><a href="/services">Услуги</a><a href="/requests">Заявки</a><a href="/performers">Исполнители</a></nav>
