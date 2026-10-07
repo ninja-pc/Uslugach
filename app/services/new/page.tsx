@@ -43,11 +43,11 @@ export default function NewServicePage() {
     const result=await supabase.from("services").insert({
       user_id:user.id, category_id:categoryId || null, title, slug:makeSlug(title), description,
       price:price ? Number(price) : null, price_type:priceType, region:region || null, city:city || null, district:district || null,
-      work_format:workFormat, image_urls:uploadedUrls, status:"published"
+      work_format:workFormat, image_urls:uploadedUrls, status:"pending"
     }).select("id").single();
     setLoading(false);
     if (result.error) { setError(result.error.message); return; }
-    router.push("/service?id=" + result.data.id);
+    router.push("/profile?moderation=service");
   }
 
   const cities = getCities(region);
