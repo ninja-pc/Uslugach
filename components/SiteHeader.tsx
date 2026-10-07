@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { LOCATION_REGIONS } from "@/lib/locations";
 
 export default function SiteHeader() {
-  const router=useRouter(); const supabase=createClient();
+  const router=useRouter();
+  const supabase=useMemo(() => createClient(), []);
   const [email,setEmail]=useState<string|null>(null),[ready,setReady]=useState(false),[unread,setUnread]=useState(0),[notifications,setNotifications]=useState(0); const [isAdmin,setIsAdmin]=useState(false);
   const [city, setCity] = useState("Москва");
   const [cityOpen, setCityOpen] = useState(false);
@@ -36,12 +37,55 @@ export default function SiteHeader() {
     setUnread(total);
   }
 
+  async function loadNotifications(userId:string){
+    const {data}=await supabase.from("notifications").select("id").eq("user_id",userId).eq("read",false);
+    setNotifications((data||[]).length);
+  }
+
   useEffect(()=>{
     let mounted=true;
-    async function loadUser(){const {data}=await supabase.auth.getUser();if(!mounted)return;setEmail(data.user?.email??null);setReady(true);if(data.user){loadUnread(data.user.id);loadNotifications(data.user.id);const {data:p}=await supabase.from("profiles").select("role,status").eq("id",data.user.id).maybeSingle();setIsAdmin(p?.role==="admin"&&p?.status==="active")}else setIsAdmin(false)}
+    async function loadUser(){
+      const {data}=await supabase.auth.getUser();
+      if(!mounted)return;
+      const user=data.user??null;
+      setEmail(user?.email??null);
+      setReady(true);
+      if(user){
+        loadUnread(user.id);
+        loadNotifications(user.id);
+        const {data:p}=await supabase.from("profiles").select("role,status").eq("id",user.id).maybeSingle();
+        if(mounted)setIsAdmin(p?.role==="admin"&&p?.status==="active");
+      }else{
+        setUnread(0); setNotifications(0); setIsAdmin(false);
+      }
+    }
     loadUser();
-    const timer=window.setInterval(async()=>{const {data}=await supabase.auth.getUser();if(data.user){loadUnread(data.user.id);loadNotifications(data.user.id)}},5000);
-    const {data:listener}=supabase.auth.onAuthStateChange((_event,session)=>{if(!mounted)return;setEmail(session?.user?.email??null);setReady(true);if(session?.user){loadUnread(session.user.id);loadNotifications(session.user.id);supabase.from("profiles").select("role,status").eq("id",session.user.id).maybeSingle().then(({data:p})=>setIsAdmin(p?.role==="admin"&&p?.status==="active"))}else {setUnread(0);setNotifications(0);setIsAdmin(false)}});
+
+    const timer=window.setInterval(async()=>{
+      const {data}=await supabase.auth.getSession();
+      if(!mounted)return;
+      const user=data.session?.user;
+      setEmail(user?.email??null);
+      if(user){loadUnread(user.id);loadNotifications(user.id)}
+      else{setUnread(0);setNotifications(0);setIsAdmin(false)}
+    },5000);
+
+    const {data:listener}=supabase.auth.onAuthStateChange((_event,session)=>{
+      if(!mounted)return;
+      const user=session?.user??null;
+      setEmail(user?.email??null);
+      setReady(true);
+      if(user){
+        loadUnread(user.id);
+        loadNotifications(user.id);
+        supabase.from("profiles").select("role,status").eq("id",user.id).maybeSingle().then(({data:p})=>{
+          if(mounted)setIsAdmin(p?.role==="admin"&&p?.status==="active");
+        });
+      }else{
+        setUnread(0);setNotifications(0);setIsAdmin(false);
+      }
+    });
+
     return ()=>{mounted=false;window.clearInterval(timer);listener.subscription.unsubscribe()};
   },[supabase]);
 
@@ -63,7 +107,8 @@ export default function SiteHeader() {
       <a className="header-search" href="/services" aria-label="Поиск"><img src="/icons/search.svg" alt="" /></a>
       {ready&&!email&&<a className="header-login" href="/login">Войти</a>}
       {ready&&!email&&<a className="header-register" href="/register">Регистрация</a>}
-      {email&&<a className="header-login header-chat-link" href="/chats"><span className="header-chat-icon"><img src="/icons/chat.svg" alt="" /></span><span>Чаты</span>{unread>0&&<b className="header-unread">{unread>99?"99+":unread}</b>}</a>}{email&&<a className="header-login header-notification-link" href="/notifications"><span className="header-chat-icon"><img src="/icons/bell.svg" alt="" /></span><span>Уведомления</span>{notifications>0&&<b className="header-unread">{notifications>99?"99+":notifications}</b>}</a>}
+      {email&&<a className="header-login header-chat-link" href="/chats"><span className="header-chat-icon"><img src="/icons/chat.svg" alt="" /></span><span>Чаты</span>{unread>0&&<b className="header-unread">{unread>99?"99+":unread}</b>}</a>}
+      {email&&<a className="header-login header-notification-link" href="/notifications"><span className="header-chat-icon"><img src="/icons/bell.svg" alt="" /></span><span>Уведомления</span>{notifications>0&&<b className="header-unread">{notifications>99?"99+":notifications}</b>}</a>}
       {email&&<a className="header-login" href="/profile">Кабинет</a>}{email&&isAdmin&&<a className="header-login admin-header-link" href="/admin">Админка</a>}
       {email&&<a className="header-register" href="/services/new">Разместить услугу</a>}
       {email&&<button className="header-logout" onClick={logout}>Выйти</button>}
