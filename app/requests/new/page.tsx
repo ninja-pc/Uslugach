@@ -66,19 +66,6 @@ export default function NewRequestPage() {
     return urls;
   }
 
-  async function uploadImages(userId:string){
-    const urls:string[]=[];
-    for(const file of images){
-      if(!file.type.startsWith("image/") || file.size>10*1024*1024) throw new Error("Каждое фото должно быть JPG, PNG или WebP и не больше 10 МБ.");
-      const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
-      const path=userId+"/requests/"+crypto.randomUUID()+"."+ext;
-      const uploaded=await supabase.storage.from("media").upload(path,file,{contentType:file.type,upsert:false});
-      if(uploaded.error) throw uploaded.error;
-      urls.push(supabase.storage.from("media").getPublicUrl(path).data.publicUrl);
-    }
-    return urls;
-  }
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
