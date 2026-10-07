@@ -66,6 +66,19 @@ export default function NewRequestPage() {
     return urls;
   }
 
+  async function uploadImages(userId:string){
+    const urls:string[]=[];
+    for(const file of images){
+      if(!file.type.startsWith("image/") || file.size>10*1024*1024) throw new Error("Каждое фото должно быть JPG, PNG или WebP и не больше 10 МБ.");
+      const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+      const path=userId+"/requests/"+crypto.randomUUID()+"."+ext;
+      const uploaded=await supabase.storage.from("media").upload(path,file,{contentType:file.type,upsert:false});
+      if(uploaded.error) throw uploaded.error;
+      urls.push(supabase.storage.from("media").getPublicUrl(path).data.publicUrl);
+    }
+    return urls;
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -81,6 +94,8 @@ export default function NewRequestPage() {
 
     setSaving(true);
     setError("");
+    let uploadedUrls:string[]=[];
+    try { uploadedUrls=await uploadImages(user.id); } catch(e:any) { setError(e.message||"Не удалось загрузить фотографии."); setSaving(false); return; }
 
     const { data, error: insertError } = await supabase
       .from("requests")
@@ -95,7 +110,7 @@ export default function NewRequestPage() {
         district: form.district.trim() || null,
         deadline: form.deadline || null,
         urgency: form.urgency,
-        status: "published",
+        status: "pending",
         image_urls: uploadedUrls,
       })
       .select("id")
@@ -107,7 +122,7 @@ export default function NewRequestPage() {
       return;
     }
 
-    router.push("/request?id=" + data.id);
+    router.push("/profile?moderation=request");
   }
 
   if (loading) {
