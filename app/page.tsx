@@ -136,8 +136,8 @@ export default function Home() {
       <section className="bento-grid bento-hero-wrap">
         <div className="bento-card hero-card">
           <div className="hero-content">
-            <div className="hero-badges"><span>Маркетплейс услуг</span><i>●</i><span>Москва и область</span></div>
-            <h1>Хорошие люди<br /><em>делают больше.</em></h1>
+            <div className="hero-badges"><span>Маркетплейс услуг</span><i>●</i></div>
+            <h1>Люди для<br /><em>Людей.</em></h1>
             <p>Найдите проверенного специалиста для любой задачи — от ремонта до дизайна.</p>
             <div className="hero-search"><div className="search-field"><img src="/icons/search.svg" alt="" /><input aria-label="Поиск услуги" value={heroSearch} onChange={(event) => setHeroSearch(event.target.value)} placeholder="Что нужно сделать?" /></div><a className="hero-search-button" href={"/services" + (heroSearch.trim() ? "?q=" + encodeURIComponent(heroSearch.trim()) : "")}>Найти</a></div>
             <div className="hero-actions"><a className="button" href="/requests/new">Мне нужна услуга <span>↗</span></a><a className="text-link" href="/services">Смотреть каталог <span>→</span></a></div>
