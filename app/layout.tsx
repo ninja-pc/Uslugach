@@ -2,14 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Услугач — услуги рядом",
-  description: "Сервис для поиска исполнителей и размещения заявок на услуги.",
+ title:"Услугач — услуги и заявки рядом",
+ description:"Маркетплейс услуг: находите специалистов, публикуйте услуги и заявки, общайтесь и выбирайте исполнителя.",
+ metadataBase:new URL("https://uslugach-barakacrm.vercel.app"),
+ robots:{index:true,follow:true},
+ openGraph:{title:"Услугач — услуги и заявки рядом",description:"Поиск специалистов и реальные заявки на услуги.",type:"website",locale:"ru_RU",siteName:"Услугач"},
+ twitter:{card:"summary_large_image",title:"Услугач — услуги и заявки рядом",description:"Поиск специалистов и реальные заявки на услуги."},
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="ru">
-      <body>{children}</body>
-    </html>
-  );
-}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ru"><body>{children}</body></html>;}

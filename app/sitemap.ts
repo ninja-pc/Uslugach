@@ -1,0 +1,2 @@
+import type { MetadataRoute } from "next";
+export default function sitemap():MetadataRoute.Sitemap{const base="https://uslugach-barakacrm.vercel.app";return[{url:base,lastModified:new Date(),changeFrequency:"daily",priority:1},{url:base+"/services",lastModified:new Date(),changeFrequency:"hourly",priority:.9},{url:base+"/requests",lastModified:new Date(),changeFrequency:"hourly",priority:.85},{url:base+"/register",changeFrequency:"monthly",priority:.5}]}

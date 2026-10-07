@@ -47,7 +47,8 @@ export default function PublicUserPage() {
   }, []);
 
   if (loading) {
-    return <><SiteHeader /><main className="page-shell"><div className="empty-state">Загрузка профиля…</div></main></>;
+    return <><SiteHeader /><main className="page-shell"><div className="empty-state">Загрузка профиля…</div><style jsx>{\`
+.portfolio-section{margin-top:16px}.portfolio-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.portfolio-grid a{display:block;position:relative;overflow:hidden;border-radius:18px;background:#f2f4f9;min-height:170px}.portfolio-grid img{width:100%;height:100%;min-height:170px;object-fit:cover;display:block;transition:transform .2s ease}.portfolio-grid a:hover img{transform:scale(1.03)}.portfolio-grid span{position:absolute;left:9px;right:9px;bottom:9px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.9);font-size:10px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:760px){.portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}`}</style></main></>;
   }
 
   if (!profile) {
