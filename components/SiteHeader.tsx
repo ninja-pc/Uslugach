@@ -101,14 +101,14 @@ export default function SiteHeader() {
         {LOCATION_REGIONS.flatMap((region) => region.cities).map((option) => <button key={option} type="button" role="option" aria-selected={city === option} className={city === option ? "city-option selected" : "city-option"} onClick={() => { setCity(option); setCityOpen(false); }}>{option}</button>)}
       </div>}
     </div>
-    <nav className="main-nav"><a href="/services">Услуги</a><a href="/requests">Заявки</a><a href="/services">Исполнители</a><a href="/profile">Кабинет</a></nav>
+    <nav className="main-nav"><a href="/services">Услуги</a><a href="/requests">Заявки</a><a href="/performers">Исполнители</a></nav>
     <div className="header-actions">
       <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={darkMode ? "Включить светлую тему" : "Включить тёмную тему"} title={darkMode ? "Светлая тема" : "Тёмная тема"}><span aria-hidden="true">{darkMode ? "☼" : "◐"}</span></button>
       <a className="header-search" href="/services" aria-label="Поиск"><img src="/icons/search.svg" alt="" /></a>
       {ready&&!email&&<a className="header-login" href="/login">Войти</a>}
       {ready&&!email&&<a className="header-register" href="/register">Регистрация</a>}
       {email&&<a className="header-login header-chat-link" href="/chats"><span className="header-chat-icon"><img src="/icons/chat.svg" alt="" /></span><span>Чаты</span>{unread>0&&<b className="header-unread">{unread>99?"99+":unread}</b>}</a>}
-      {email&&<a className="header-login header-notification-link" href="/notifications"><span className="header-chat-icon"><img src="/icons/bell.svg" alt="" /></span><span>Уведомления</span>{notifications>0&&<b className="header-unread">{notifications>99?"99+":notifications}</b>}</a>}
+      {email&&<a className="header-login header-notification-link" href="/notifications"><span className="header-chat-icon"><img src="/icons/bell.svg" alt="" /></span>{notifications>0&&<b className="header-unread">{notifications>99?"99+":notifications}</b>}</a>}
       {email&&<a className="header-login" href="/profile">Кабинет</a>}{email&&isAdmin&&<a className="header-login admin-header-link" href="/admin">Админка</a>}
       {email&&<a className="header-register" href="/services/new">Разместить услугу</a>}
       {email&&<button className="header-logout" onClick={logout}>Выйти</button>}
