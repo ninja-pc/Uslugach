@@ -11,6 +11,7 @@ type ComplaintRow={id:string;reason:string;details:string|null;status:string;cre
 type CategoryRow={id:string;name:string;slug:string;is_active:boolean;sort_order:number};
 
 const supabase=createClient();
+const STAT_LABELS:Record<string,string>={users:"пользователей",services:"услуг",requests:"заявок",responses:"откликов",messages:"сообщений",complaints:"жалоб"};
 
 export default function AdminPage(){
  const [allowed,setAllowed]=useState<boolean|null>(null); const [loading,setLoading]=useState(true); const [error,setError]=useState("");
@@ -59,7 +60,7 @@ export default function AdminPage(){
 
  return <><SiteHeader/><main className="page-shell admin-page">
    <section className="admin-head"><div><span className="eyebrow">Управление платформой</span><h1>Админ-панель</h1><p>Модерация пользователей, объявлений, жалоб и категорий.</p></div><button className="secondary-btn" onClick={load}>Обновить данные</button></section>
-   <section className="admin-stats">{Object.entries(stats).map(([key,value])=><div className="admin-stat" key={key}><strong>{value}</strong><span>{({users:"пользователей",services:"услуг",requests:"заявок",responses:"откликов",messages:"сообщений",complaints:"жалоб"} as Record<string,string>)[key]}</span></div>)}</section>
+   <section className="admin-stats">{Object.entries(stats).map(([key,value])=><div className="admin-stat" key={key}><strong>{value}</strong><span>{STAT_LABELS[key]}</span></div>)}</section>
    <div className="admin-grid">
     <section className="content-card"><div className="section-head"><div><span className="eyebrow">Пользователи</span><h2>Аккаунты</h2></div></div><div className="admin-list">{users.map(u=><div className="admin-row" key={u.id}><div><strong>{u.display_name||"Без имени"}</strong><span>{u.city||u.region||"Локация не указана"} · {new Date(u.created_at).toLocaleDateString("ru-RU")}</span></div><div className="admin-row-actions"><b className={u.status==="blocked"?"status-bad":"status-good"}>{u.status==="blocked"?"Заблокирован":"Активен"}</b>{u.role!=="admin"&&<button className="text-button" disabled={busy===u.id} onClick={()=>update("profiles",u.id,{status:u.status==="blocked"?"active":"blocked"})}>{u.status==="blocked"?"Разблокировать":"Заблокировать"}</button>}</div></div>)}</div></section>
     <section className="content-card"><div className="section-head"><div><span className="eyebrow">Объявления</span><h2>Услуги</h2></div></div><div className="admin-list">{services.map(s=><div className="admin-row" key={s.id}><div><strong>{s.title}</strong><span>{s.provider_name||"Исполнитель"} · {new Date(s.created_at).toLocaleDateString("ru-RU")}</span></div><select value={s.status} disabled={busy===s.id} onChange={e=>update("services",s.id,{status:e.target.value})}><option value="published">Опубликована</option><option value="pending">На модерации</option><option value="rejected">Отклонена</option><option value="archived">Архив</option></select></div>)}</div></section>
