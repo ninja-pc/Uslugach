@@ -229,6 +229,7 @@ export default function AdminPage() {
                 <div className="admin-row" key={request.id}>
                   <div><strong>{request.title}</strong><span>{request.display_name || "Заказчик"} · {new Date(request.created_at).toLocaleDateString("ru-RU")}</span></div>
                   <select value={request.status} disabled={busy === request.id} onChange={(e) => update("requests", request.id, { status: e.target.value })}>
+                    <option value="pending">На модерации</option>
                     <option value="published">Опубликована</option>
                     <option value="closed">Закрыта</option>
                     <option value="archived">Архив</option>
