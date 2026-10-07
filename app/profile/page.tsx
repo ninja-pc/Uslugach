@@ -19,13 +19,16 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false); const [loading, setLoading] = useState(true);
   const [services,setServices] = useState<Service[]>([]);
   const [requests,setRequests] = useState<Request[]>([]);
-  const [favorites,setFavorites] = useState<any[]>([]);
+  const [favorites,setFavorites] = useState<any[]>([]); const [moderationMessage,setModerationMessage] = useState("");
 
   useEffect(() => {
     async function load() {
       const auth = await supabase.auth.getUser(); const user = auth.data.user;
       if (!user) { router.replace("/login"); return; }
       setEmail(user.email || "");
+      const moderation = new URLSearchParams(window.location.search).get("moderation");
+      if (moderation === "service") setModerationMessage("Услуга отправлена на модерацию. После проверки администратора она появится в каталоге.");
+      if (moderation === "request") setModerationMessage("Заявка отправлена на модерацию. После проверки администратора она появится среди опубликованных заявок.");
       const [result, servicesResult, requestsResult, favoritesResult] = await Promise.all([
         supabase.from("profiles").select("display_name,bio,region,city,district,phone").eq("id", user.id).maybeSingle(),
         supabase.from("services").select("id,title,description,price,price_type,city,status").eq("user_id", user.id).order("created_at",{ascending:false}),
@@ -56,7 +59,7 @@ export default function ProfilePage() {
   const cities = getCities(profile.region || "");
 
   return <main className="page"><SiteHeader />
-    <section className="section cabinet-section"><div className="cabinet-hero"><div className="cabinet-profile"><div className="cabinet-avatar">{(profile.display_name||email||"У").slice(0,1).toUpperCase()}</div><div><span className="eyebrow">Личный кабинет</span><h1>{profile.display_name||"Мой кабинет"}</h1><p>{email}</p></div></div><div className="cabinet-stats"><div><strong>{services.filter(s=>s.status==="published").length}</strong><span>опубликованных услуг</span></div><div><strong>{requests.filter(r=>!["closed","cancelled","completed"].includes(r.status)).length}</strong><span>активных заявок</span></div></div></div>
+    <section className="section cabinet-section">{moderationMessage&&<div className="form-success" style={{marginBottom:"16px"}}>{moderationMessage}</div>}<div className="cabinet-hero"><div className="cabinet-profile"><div className="cabinet-avatar">{(profile.display_name||email||"У").slice(0,1).toUpperCase()}</div><div><span className="eyebrow">Личный кабинет</span><h1>{profile.display_name||"Мой кабинет"}</h1><p>{email}</p></div></div><div className="cabinet-stats"><div><strong>{services.filter(s=>s.status==="published").length}</strong><span>опубликованных услуг</span></div><div><strong>{requests.filter(r=>!["closed","cancelled","completed"].includes(r.status)).length}</strong><span>активных заявок</span></div></div></div>
     <div className="cabinet-actions"><a className="cabinet-action primary" href="/services/new"><strong>Разместить услугу</strong><span>Предложить свои услуги</span></a><a className="cabinet-action" href="/services"><strong>Найти специалиста</strong><span>Открыть каталог</span></a><a className="cabinet-action" href="/requests/new"><strong>Создать заявку</strong><span>Опишите нужную задачу</span></a></div>
     <div className="cabinet-columns"><section className="cabinet-list-card"><div className="cabinet-list-head"><div><span className="eyebrow">Мои предложения</span><h2>Опубликованные услуги</h2></div><a href="/services/new">＋ Добавить</a></div>
       {services.filter(s=>s.status==="published").length===0?<div className="cabinet-empty"><strong>Пока нет опубликованных услуг</strong><span>Добавьте первое предложение.</span><a className="button" href="/services/new">Разместить услугу</a></div>:<div className="cabinet-items">{services.filter(s=>s.status==="published").map(s=><a className="cabinet-item" href={"/service?id="+s.id} key={s.id}><div className="cabinet-item-art"><img src="/illustrations/other.svg" alt="" /></div><div className="cabinet-item-main"><span className="item-status published">Опубликована</span><h3>{s.title}</h3><p>{s.description||"Без описания"}</p><small>{s.city||"Город не указан"}</small></div><strong className="cabinet-item-price">{s.price==null?"По договорённости":new Intl.NumberFormat("ru-RU").format(s.price)+" ₽"+(s.price_type==="hourly"?" / час":"")}</strong></a>)}</div>}
