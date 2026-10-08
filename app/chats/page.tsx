@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 
 type ChatItem = { id:string; request_id:string|null; service_id:string|null; title:string; personName:string; personId:string|null; lastMessage:string; lastAt:string|null; unread:number };
 
@@ -66,7 +65,8 @@ export default function ChatsPage(){
   useEffect(()=>{load(false);const timer=window.setInterval(()=>load(true),5000);return ()=>window.clearInterval(timer)},[]);
   useEffect(()=>{if(!notice)return;const t=window.setTimeout(()=>setNotice(""),5000);return ()=>window.clearTimeout(t)},[notice]);
 
-  return <><SiteHeader/><main className="page-shell chats-page">
+  return <>
+<main className="page-shell chats-page">
     {notice&&<div className="chat-notification"><span className="chat-notification-dot"/><div><strong>Новое сообщение</strong><span>{notice.replace("Новое сообщение от ","")}</span></div><button onClick={()=>setNotice("")} aria-label="Закрыть">×</button></div>}
     <section className="catalog-hero"><div><span className="eyebrow">Общение</span><h1>Мои чаты</h1><p>Здесь видно, кто написал, по какому объявлению и есть ли новые сообщения.</p></div></section>
     {loading?<div className="empty-state">Загрузка…</div>:items.length===0?
