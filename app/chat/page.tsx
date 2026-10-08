@@ -3,7 +3,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 
 export default function ChatPage(){
   const supabase=createClient();
@@ -73,7 +72,7 @@ export default function ChatPage(){
     if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}
   }
 
-  return <><SiteHeader/><main className="page-shell chat-page">
+  return <><main className="page-shell chat-page">
     <div className="breadcrumbs"><Link href="/chats">Мои чаты</Link><span>/</span><span>Переписка</span></div>
     <section className="chat-shell">
       <header className="chat-header">
