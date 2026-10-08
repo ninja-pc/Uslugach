@@ -3,7 +3,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 
 export default function RequestDetailPage() {
   const supabase=createClient();
@@ -65,11 +64,11 @@ export default function RequestDetailPage() {
     setForm({message:"",price:""}); await load(id); setSending(false);
   }
 
-  if(loading)return <><SiteHeader/><main className="page-shell"><div className="empty-state">Загрузка заявки…</div></main></>;
-  if(!request)return <><SiteHeader/><main className="page-shell"><div className="empty-state"><h3>Заявка не найдена</h3><Link href="/requests">Вернуться к заявкам</Link></div></main></>;
+  if(loading)return <><main className="page-shell"><div className="empty-state">Загрузка заявки…</div></main></>;
+  if(!request)return <><main className="page-shell"><div className="empty-state"><h3>Заявка не найдена</h3><Link href="/requests">Вернуться к заявкам</Link></div></main></>;
 
   const isOwner=me?.id===request.user_id;
-  return <><SiteHeader/><main className="page-shell">
+  return <><main className="page-shell">
     <div className="breadcrumbs"><Link href="/requests">Заявки</Link><span>/</span><span>{request.title}</span></div>
     <section className="detail-hero request-detail-hero"><div><span className="eyebrow">{request.urgency!=="normal"?"Срочная заявка":"Заявка на услугу"}</span><h1>{request.title}</h1><div className="detail-chips"><span>{request.city||request.region||"Удалённо"}</span>{request.district&&<span>{request.district}</span>}{request.deadline&&<span>до {new Date(request.deadline).toLocaleDateString("ru-RU")}</span>}</div></div><div className="service-visual">{request.image_urls?.length ? <img src={request.image_urls[0]} alt={request.title} /> : <img src="/illustrations/tools.svg" alt="" />}</div></section>
     <div className="detail-layout"><div>
