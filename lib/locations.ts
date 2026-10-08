@@ -93,6 +93,10 @@ export const LOCATION_REGIONS = REGIONS.sort((a, b) => a.name.localeCompare(b.na
 
 export const REGION_NAMES = LOCATION_REGIONS.map((region) => region.name);
 
+export const LOCATION_CITIES = Array.from(
+  new Set(LOCATION_REGIONS.flatMap((region) => region.cities))
+).sort((a, b) => a.localeCompare(b, "ru"));
+
 export function getCities(region: string) {
   return LOCATION_REGIONS.find((item) => item.name === region)?.cities ?? [];
 }
