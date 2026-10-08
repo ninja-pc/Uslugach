@@ -1,4 +1,3 @@
-import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 
 export default function TermsPage() {
@@ -56,7 +55,6 @@ export default function TermsPage() {
           </section>
         </div>
       </main>
-      <SiteFooter />
     </>
   );
 }
