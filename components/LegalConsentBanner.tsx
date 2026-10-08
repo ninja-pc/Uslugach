@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-const CONSENT_KEY = "uslugach-legal-consent-v1";
+const CONSENT_KEY = "uslugach-legal-consent-v2";
 
 export default function LegalConsentBanner() {
   const pathname = usePathname();
