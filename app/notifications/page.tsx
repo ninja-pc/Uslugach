@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import SiteHeader from "@/components/SiteHeader";
 import { createClient } from "@/lib/supabase/client";
 
 type NotificationRow={id:string;type:string;title:string;body:string|null;link:string|null;read_at:string|null;created_at:string};
@@ -32,9 +31,11 @@ export default function NotificationsPage(){
    await load();
  }
 
- if(loading)return <><SiteHeader/><main className="page-shell"><div className="empty-state">Загружаем уведомления…</div></main></>;
+ if(loading)return <>
+<main className="page-shell"><div className="empty-state">Загружаем уведомления…</div></main></>;
 
- return <><SiteHeader/><main className="page-shell notifications-page">
+ return <>
+<main className="page-shell notifications-page">
    <section className="notifications-head"><div><span className="eyebrow">События аккаунта</span><h1>Уведомления</h1><p>Отклики, сообщения и отзывы в одном месте.</p></div><button className="secondary-btn" onClick={markAll}>Прочитать всё</button></section>
    <section className="notifications-list">
      {rows.length===0?<div className="content-card mini-empty">Пока нет уведомлений.</div>:rows.map(row=><article className={row.read_at?"notification-row":"notification-row unread"} key={row.id} onClick={()=>{if(!row.read_at)markRead(row.id);if(row.link)router.push(row.link)}}>
