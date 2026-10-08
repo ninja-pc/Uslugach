@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { LOCATION_REGIONS } from "@/lib/locations";
+import { LOCATION_CITIES } from "@/lib/locations";
 
 export default function SiteHeader() {
   const router=useRouter();
@@ -106,7 +106,7 @@ export default function SiteHeader() {
         <img src="/icons/location.svg" alt="" /><span>{city}</span><b aria-hidden="true">⌄</b>
       </button>
       {cityOpen && <div className="city-menu" role="listbox" aria-label="Выберите город">
-        {LOCATION_REGIONS.flatMap((region) => region.cities).map((option) => <button key={option} type="button" role="option" aria-selected={city === option} className={city === option ? "city-option selected" : "city-option"} onClick={() => selectCity(option)}>{option}</button>)}
+        {LOCATION_CITIES.map((option) => <button key={option} type="button" role="option" aria-selected={city === option} className={city === option ? "city-option selected" : "city-option"} onClick={() => selectCity(option)}>{option}</button>)}
       </div>}
     </div>
     <nav className="main-nav"><a href="/services">Услуги</a><a href="/requests">Заявки</a><a href="/performers">Исполнители</a></nav>
