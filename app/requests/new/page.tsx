@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { LOCATION_REGIONS, getCities } from "@/lib/locations";
-import SiteHeader from "@/components/SiteHeader";
 
 export default function NewRequestPage() {
   const supabase = createClient();
@@ -115,8 +114,7 @@ export default function NewRequestPage() {
   if (loading) {
     return (
       <>
-        <SiteHeader />
-        <main className="page-shell">
+<main className="page-shell">
           <div className="empty-state">Загрузка…</div>
         </main>
       </>
@@ -125,8 +123,7 @@ export default function NewRequestPage() {
 
   return (
     <>
-      <SiteHeader />
-      <main className="page-shell request-create-page">
+<main className="page-shell request-create-page">
         <section className="request-create-head">
           <span className="eyebrow">Новая заявка</span>
           <h1>Опишите задачу — специалисты откликнутся</h1>
