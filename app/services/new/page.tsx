@@ -3,7 +3,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 import { LOCATION_REGIONS, getCities } from "@/lib/locations";
 
 type Category = { id: string; name: string };
@@ -70,17 +69,18 @@ export default function NewServicePage() {
 
   const cities = getCities(region);
 
-  if (checkingAuth) return <main className="page"><SiteHeader /><section className="section narrow"><p>Проверяем аккаунт...</p></section></main>;
+  if (checkingAuth) return <main className="page">
+<section className="section narrow"><p>Проверяем аккаунт...</p></section></main>;
 
-  if (!userId) return <main className="page"><SiteHeader />
-    <section className="section narrow">
+  if (!userId) return <main className="page">
+<section className="section narrow">
       <span className="eyebrow">Нужен аккаунт</span><h1>Размещать услуги могут только зарегистрированные пользователи</h1>
       <p>Зарегистрируйтесь один раз — после этого сможете размещать услуги, редактировать профиль и общаться с клиентами.</p>
       <div className="hero-actions"><a className="button" href="/register?next=/services/new">Зарегистрироваться</a><a className="button secondary" href="/login?next=/services/new">Войти</a></div>
     </section></main>;
 
-  return <main className="page"><SiteHeader />
-    <section className="section narrow"><span className="eyebrow">Новая услуга</span><h1>Предложите свою услугу</h1><p>Заполните основные поля и добавьте до 10 фотографий. Первое фото станет главным.</p>
+  return <main className="page">
+<section className="section narrow"><span className="eyebrow">Новая услуга</span><h1>Предложите свою услугу</h1><p>Заполните основные поля и добавьте до 10 фотографий. Первое фото станет главным.</p>
     <form className="form-card form-wide" onSubmit={submit}>
       <label>Название услуги<input value={title} onChange={e=>setTitle(e.target.value)} required maxLength={140} placeholder="Например, ремонт ванной комнаты" /></label>
       <label>Категория<select value={categoryId} onChange={e=>setCategoryId(e.target.value)} required><option value="">Выберите категорию</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
