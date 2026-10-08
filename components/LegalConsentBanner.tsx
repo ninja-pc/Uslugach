@@ -1,21 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const CONSENT_KEY = "uslugach-legal-consent-v1";
 
 export default function LegalConsentBanner() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const [rules, setRules] = useState(false);
   const [privacy, setPrivacy] = useState(false);
 
   useEffect(() => {
+    if (pathname === "/terms" || pathname === "/privacy") { setVisible(false); return; }
     try {
       if (window.localStorage.getItem(CONSENT_KEY) !== "accepted") setVisible(true);
     } catch {
       setVisible(true);
     }
-  }, []);
+  }, [pathname]);
 
   function accept() {
     if (!rules || !privacy) return;
