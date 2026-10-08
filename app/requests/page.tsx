@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 import { LOCATION_REGIONS, getCities } from "@/lib/locations";
 
 export default function RequestsPage() {
@@ -23,7 +22,8 @@ export default function RequestsPage() {
 
   const filtered=useMemo(()=>requests.filter(r=>(r.title+" "+r.description+" "+(r.city||"")+" "+(r.region||"")).toLowerCase().includes(q.toLowerCase())&&(!category||r.category_id===categories.find(c=>c.slug===category)?.id)&&(!region||r.region===region)&&(!city||r.city===city)&&(!minBudget||(r.budget!==null&&r.budget>=Number(minBudget)))&&(!maxBudget||(r.budget!==null&&r.budget<=Number(maxBudget)))&&(!urgency||r.urgency===urgency)),[requests,q,category,region,city,minBudget,maxBudget,urgency,categories]);
 
-  return <><SiteHeader/><main className="page-shell">
+  return <>
+<main className="page-shell">
     <section className="catalog-hero"><div><span className="eyebrow">Заявки</span><h1>Люди ищут специалистов</h1><p>Находите подходящие задачи и предлагайте свою помощь.</p></div><Link className="primary-btn" href="/requests/new">Создать заявку</Link></section>
     <div className="catalog-filters">{categories.map(c=><button type="button" key={c.id} className={category===c.slug?"active":""} onClick={()=>setCategory(category===c.slug?"":c.slug)}>{c.name}</button>)}</div><button type="button" className="secondary-btn filter-toggle" onClick={()=>setFiltersOpen(!filtersOpen)}>{filtersOpen?"Скрыть фильтры":"Расширенные фильтры"} · {filtered.length}</button>{filtersOpen&&<div className="filter-panel"><label>Регион<select value={region} onChange={e=>{setRegion(e.target.value);setCity("")}}><option value="">Все регионы</option>{LOCATION_REGIONS.map(x=><option key={x.name}>{x.name}</option>)}</select></label><label>Город<select value={city} onChange={e=>setCity(e.target.value)} disabled={!region}><option value="">Все города</option>{getCities(region).map(x=><option key={x}>{x}</option>)}</select></label><label>Бюджет от<input type="number" min="0" value={minBudget} onChange={e=>setMinBudget(e.target.value)}/></label><label>Бюджет до<input type="number" min="0" value={maxBudget} onChange={e=>setMaxBudget(e.target.value)}/></label><label>Срочность<select value={urgency} onChange={e=>setUrgency(e.target.value)}><option value="">Любая</option><option value="urgent">Срочно</option><option value="normal">Обычная</option></select></label><button type="button" className="text-button filter-reset" onClick={()=>{setCategory("");setRegion("");setCity("");setMinBudget("");setMaxBudget("");setUrgency("")}}>Сбросить</button></div>}<div className="catalog-toolbar"><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Поиск по заявкам…" /><span>{filtered.length} заявок</span></div>
     {loading ? <div className="empty-state">Загружаем заявки…</div> : filtered.length===0 ? <div className="empty-state"><h3>Заявок пока нет</h3><p>Попробуйте изменить запрос или создайте первую заявку.</p></div> :
