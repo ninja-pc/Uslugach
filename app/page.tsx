@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
 import { createClient } from "@/lib/supabase/client";
 
 type Service = {
@@ -132,7 +131,6 @@ export default function Home() {
 
   return (
     <main className="bento-home">
-      <SiteHeader />
       <section className="bento-grid bento-hero-wrap">
         <div className="bento-card hero-card">
           <div className="hero-content">
@@ -158,7 +156,6 @@ export default function Home() {
       <section className="bento-grid category-bento"><div className="section-intro"><span className="eyebrow">Выберите направление</span><h2>Найдётся<br /><em>своё.</em></h2><a className="text-link" href="/services">Все категории →</a></div>{categories.slice(0, 6).map((category, index) => <a className={"bento-card category-tile " + category.tone + " cat-" + index} href={"/services?category=" + category.slug} key={category.name}><img className="category-illustration" src={category.image} alt="" /><span className="category-name">{category.name}</span><span className="category-arrow">↗</span></a>)}</section>
       <section className="content-section bento-services"><div className="section-head"><div><span className="eyebrow">Свежие предложения</span><h2>Услуги, которые<br /><em>выбирают сейчас</em></h2></div><a href="/services" className="text-link">Смотреть все →</a></div>{loading ? <div className="service-preview-grid">{[1, 2, 3].map((item) => <div className="preview-card preview-skeleton" key={item}><div className="skeleton-image" /></div>)}</div> : services.length === 0 ? <div className="empty"><strong>Пока нет опубликованных услуг</strong><p>Станьте первым исполнителем — разместите свою услугу.</p><a className="button" href="/services/new">Разместить услугу</a></div> : <div className="service-preview-grid">{services.slice(0, 4).map((service) => { const category = service.category_id ? categoryMap[service.category_id] : undefined; const provider = profiles[service.user_id]?.display_name || "Исполнитель"; return <a className="preview-card" href={"/service?id=" + service.id} key={service.id}><div className="preview-image"><img src={illustrationFor(service, category)} alt="" /><button type="button" className={"favorite" + (favorites.has(service.id) ? " is-favorite" : "")} aria-label={favorites.has(service.id) ? "Убрать из избранного" : "В избранное"} onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleFavorite(service.id); }}><img src="/icons/heart.svg" alt="" /></button></div><div className="service-category">{category?.name || "Услуга"}</div><h3>{service.title}</h3><p>{service.description || "Описание услуги пока не добавлено."}</p><div className="provider"><span className="avatar">{provider.slice(0, 1).toUpperCase()}</span><span><strong>{provider}</strong><small>{service.city || service.region || "Россия"}</small></span></div><strong className="price">{formatPrice(service.price, service.price_type)}</strong></a>; })}</div>}</section>
       <section className="bento-footer"><div><span className="eyebrow">Услугач</span><h2>Делайте жизнь<br /><em>проще.</em></h2></div><div className="footer-cta"><p>Всё необходимое —<br />в одном месте.</p><a className="button" href="/services">Открыть каталог ↗</a></div></section>
-      <footer className="modern-footer"><div><a className="logo" href="/"><img src="/icons/logo-mark.svg" alt="" />Услугач</a><span>Маркетплейс услуг рядом с вами</span></div><div><a href="/services">Каталог</a><a href="/profile">Личный кабинет</a><a href="/register">Регистрация</a></div><small>© Услугач · MVP 1.0</small></footer>
     </main>
   );
 }
