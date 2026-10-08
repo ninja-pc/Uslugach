@@ -6,6 +6,11 @@ export const metadata: Metadata = {
  description:"Маркетплейс услуг: находите специалистов, публикуйте услуги и заявки, общайтесь и выбирайте исполнителя.",
  metadataBase:new URL("https://uslugach-barakacrm.vercel.app"),
  robots:{index:true,follow:true},
+ icons:{
+  icon:"/icons/logo-mark.svg",
+  shortcut:"/icons/logo-mark.svg",
+  apple:"/icons/logo-mark.svg",
+ },
  openGraph:{title:"Услугач — услуги и заявки рядом",description:"Поиск специалистов и реальные заявки на услуги.",type:"website",locale:"ru_RU",siteName:"Услугач"},
  twitter:{card:"summary_large_image",title:"Услугач — услуги и заявки рядом",description:"Поиск специалистов и реальные заявки на услуги."},
 };
