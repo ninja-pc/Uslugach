@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 
 type Row = { id: string; title?: string; display_name?: string | null; name?: string; status: string; created_at: string; role?: string; city?: string | null; region?: string | null; slug?: string; is_active?: boolean; reason?: string; details?: string | null; service_id?: string | null };
 type Stats = { users: number; services: number; requests: number; responses: number; messages: number; complaints: number };
@@ -125,8 +124,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <>
-        <SiteHeader />
-        <main className="page-shell">
+<main className="page-shell">
           <div className="empty-state">Проверяем доступ…</div>
         </main>
       </>
@@ -136,8 +134,7 @@ export default function AdminPage() {
   if (!allowed) {
     return (
       <>
-        <SiteHeader />
-        <main className="page-shell">
+<main className="page-shell">
           <section className="admin-denied">
             <span className="eyebrow">Закрытый раздел</span>
             <h1>Доступ к админке закрыт</h1>
@@ -160,8 +157,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <SiteHeader />
-      <main className="page-shell admin-page">
+<main className="page-shell admin-page">
         <section className="admin-head">
           <div>
             <span className="eyebrow">Управление платформой</span>
