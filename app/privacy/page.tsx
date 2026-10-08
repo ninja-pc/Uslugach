@@ -1,4 +1,3 @@
-import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 
 export default function PrivacyPage() {
@@ -65,7 +64,6 @@ export default function PrivacyPage() {
           </section>
         </div>
       </main>
-      <SiteFooter />
     </>
   );
 }
