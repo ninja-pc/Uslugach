@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import SiteHeader from "@/components/SiteHeader";
 import LegalConsentBanner from "@/components/LegalConsentBanner";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -17,4 +18,4 @@ export const metadata: Metadata = {
  twitter:{card:"summary_large_image",title:"Услугач — услуги и заявки рядом",description:"Поиск специалистов и реальные заявки на услуги."},
 };
 
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ru"><body>{children}<SiteFooter /><LegalConsentBanner /></body></html>;}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ru"><body><SiteHeader />{children}<SiteFooter /><LegalConsentBanner /></body></html>;}
