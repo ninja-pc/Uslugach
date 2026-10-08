@@ -1,10 +1,8 @@
-import SiteHeader from "@/components/SiteHeader";
 
 export default function TermsPage() {
   return (
     <>
-      <SiteHeader />
-      <main className="legal-page">
+<main className="legal-page">
         <div className="legal-shell">
           <span className="eyebrow">Документ сервиса</span>
           <h1>Правила сервиса «Услугач»</h1>
