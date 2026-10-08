@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 
 type Service={id:string;user_id:string;title:string;description:string;price:number|null;price_type:string;city:string|null;district:string|null;region:string|null;work_format:string;category_id:string|null;provider_name:string;bio:string|null;image_urls:string[]};
 type Similar={id:string;user_id:string;title:string;description:string|null;price:number|null;price_type:string|null;city:string|null;work_format:string|null};
@@ -59,11 +58,14 @@ export default function ServicePage(){
    window.location.href="/chat?id="+chatId;
  }
 
- if(loading)return <main className="page"><SiteHeader/><section className="section"><p>Загружаем услугу...</p></section></main>;
- if(error)return <main className="page"><SiteHeader/><section className="section narrow"><div className="form-error">{error}</div><a className="button" href="/services">Вернуться в каталог</a></section></main>;
+ if(loading)return <main className="page">
+<section className="section"><p>Загружаем услугу...</p></section></main>;
+ if(error)return <main className="page">
+<section className="section narrow"><div className="form-error">{error}</div><a className="button" href="/services">Вернуться в каталог</a></section></main>;
  if(!service)return null;
  const format=service.work_format==="remote"?"Удалённо":service.work_format==="hybrid"?"Гибрид":"На месте";
- return <main className="page"><SiteHeader/><section className="section service-page">
+ return <main className="page">
+<section className="section service-page">
    <div className="service-breadcrumb"><a href="/services">Каталог</a><span>/</span><span>{service.city||service.region||"Россия"}</span><span>/</span><strong>{service.title}</strong></div>
    <div className="service-detail-new">
     <article className="service-main-new">
