@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 import { LOCATION_REGIONS, getCities } from "@/lib/locations";
 
 type Category={id:string;name:string;slug:string};
@@ -73,8 +72,8 @@ export default function ServicesPage() {
     else {const {error}=await supabase.from("favorites").insert({user_id:auth.data.user.id,service_id:serviceId});if(!error)setFavorites(current=>new Set(current).add(serviceId));}
   }
 
-  return <main className="page"><SiteHeader />
-    <section className="section catalog-page"><div className="catalog-heading"><div><span className="eyebrow">Маркетплейс</span><h1>Найдите специалиста</h1><p>Реальные опубликованные услуги от исполнителей.</p></div><a className="button" href="/services/new">Разместить услугу</a></div>
+  return <main className="page">
+<section className="section catalog-page"><div className="catalog-heading"><div><span className="eyebrow">Маркетплейс</span><h1>Найдите специалиста</h1><p>Реальные опубликованные услуги от исполнителей.</p></div><a className="button" href="/services/new">Разместить услугу</a></div>
     <div className="search catalog-search"><img src="/icons/search.svg" alt="" /><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Поиск по услугам, описанию, городу или региону" /></div>
     <div className="catalog-filters">{categories.map(c=><button type="button" key={c.id} className={categoryFilter===c.slug?"active":""} onClick={()=>setCategoryFilter(categoryFilter===c.slug?"":c.slug)}>{c.name}</button>)}</div>
     <button type="button" className="secondary-btn filter-toggle" onClick={()=>setFiltersOpen(!filtersOpen)}>{filtersOpen?"Скрыть фильтры":"Расширенные фильтры"} · {filtered.length}</button>
