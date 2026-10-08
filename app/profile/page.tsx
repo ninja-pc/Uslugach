@@ -3,7 +3,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 import { LOCATION_REGIONS, getCities } from "@/lib/locations";
 
 type Profile = { display_name: string | null; bio: string | null; region: string | null; city: string | null; district: string | null; phone: string | null };
@@ -54,12 +53,13 @@ export default function ProfilePage() {
   }
 
   async function logout() { await supabase.auth.signOut(); router.push("/"); router.refresh(); }
-  if (loading) return <main className="page"><SiteHeader /><section className="section narrow"><p>Загружаем профиль...</p></section></main>;
+  if (loading) return <main className="page">
+<section className="section narrow"><p>Загружаем профиль...</p></section></main>;
 
   const cities = getCities(profile.region || "");
 
-  return <main className="page"><SiteHeader />
-    <section className="section cabinet-section">{moderationMessage&&<div className="form-success" style={{marginBottom:"16px"}}>{moderationMessage}</div>}<div className="cabinet-hero"><div className="cabinet-profile"><div className="cabinet-avatar">{(profile.display_name||email||"У").slice(0,1).toUpperCase()}</div><div><span className="eyebrow">Личный кабинет</span><h1>{profile.display_name||"Мой кабинет"}</h1><p>{email}</p></div></div><div className="cabinet-stats"><div><strong>{services.filter(s=>s.status==="published").length}</strong><span>опубликованных услуг</span></div><div><strong>{requests.filter(r=>!["closed","cancelled","completed"].includes(r.status)).length}</strong><span>активных заявок</span></div></div></div>
+  return <main className="page">
+<section className="section cabinet-section">{moderationMessage&&<div className="form-success" style={{marginBottom:"16px"}}>{moderationMessage}</div>}<div className="cabinet-hero"><div className="cabinet-profile"><div className="cabinet-avatar">{(profile.display_name||email||"У").slice(0,1).toUpperCase()}</div><div><span className="eyebrow">Личный кабинет</span><h1>{profile.display_name||"Мой кабинет"}</h1><p>{email}</p></div></div><div className="cabinet-stats"><div><strong>{services.filter(s=>s.status==="published").length}</strong><span>опубликованных услуг</span></div><div><strong>{requests.filter(r=>!["closed","cancelled","completed"].includes(r.status)).length}</strong><span>активных заявок</span></div></div></div>
     <div className="cabinet-actions"><a className="cabinet-action primary" href="/services/new"><strong>Разместить услугу</strong><span>Предложить свои услуги</span></a><a className="cabinet-action" href="/services"><strong>Найти специалиста</strong><span>Открыть каталог</span></a><a className="cabinet-action" href="/requests/new"><strong>Создать заявку</strong><span>Опишите нужную задачу</span></a></div>
     <div className="cabinet-columns"><section className="cabinet-list-card"><div className="cabinet-list-head"><div><span className="eyebrow">Мои предложения</span><h2>Опубликованные услуги</h2></div><a href="/services/new">＋ Добавить</a></div>
       {services.filter(s=>s.status==="published").length===0?<div className="cabinet-empty"><strong>Пока нет опубликованных услуг</strong><span>Добавьте первое предложение.</span><a className="button" href="/services/new">Разместить услугу</a></div>:<div className="cabinet-items">{services.filter(s=>s.status==="published").map(s=><a className="cabinet-item" href={"/service?id="+s.id} key={s.id}><div className="cabinet-item-art"><img src="/illustrations/other.svg" alt="" /></div><div className="cabinet-item-main"><span className="item-status published">Опубликована</span><h3>{s.title}</h3><p>{s.description||"Без описания"}</p><small>{s.city||"Город не указан"}</small></div><strong className="cabinet-item-price">{s.price==null?"По договорённости":new Intl.NumberFormat("ru-RU").format(s.price)+" ₽"+(s.price_type==="hourly"?" / час":"")}</strong></a>)}</div>}
