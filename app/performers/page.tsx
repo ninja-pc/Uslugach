@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
 
 type Performer = {
   id: string;
@@ -95,8 +94,7 @@ export default function PerformersPage() {
 
   return (
     <main className="page">
-      <SiteHeader />
-      <section className="section performers-page">
+<section className="section performers-page">
         <div className="catalog-heading">
           <div>
             <span className="eyebrow">Специалисты</span>
