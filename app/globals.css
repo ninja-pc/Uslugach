@@ -394,3 +394,18 @@ html.dark .chat-notification span:not(.chat-notification-dot){color:var(--muted)
   .header-logout{display:none}
   .theme-toggle{width:32px;height:32px}
 }
+
+
+/* Additional dark-surface coverage for detail, review and profile subcomponents. */
+html.dark .provider-card-new,html.dark .trust-card,html.dark .review-card,html.dark .chat-review,html.dark .mini-empty,html.dark .cabinet-empty,html.dark .cabinet-item,html.dark .public-service-item,html.dark .service-bottom-banner,html.dark .service-note{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .provider-card-new h2,html.dark .provider-card-new h3,html.dark .trust-card h2,html.dark .trust-card h3,html.dark .review-card strong,html.dark .review-card h3,html.dark .cabinet-list-head,html.dark .cabinet-item-main strong,html.dark .cabinet-item-price,html.dark .card-body,html.dark .card-body strong,html.dark .request-card h3,html.dark .request-card .card-meta{color:var(--text)}
+html.dark .review-card p,html.dark .review-card small,html.dark .provider-card-new p,html.dark .trust-card p,html.dark .cabinet-empty p,html.dark .mini-empty p{color:var(--muted)}
+html.dark .service-note strong{color:#c0b6ff}
+html.dark .request-card .card-visual{background:var(--surface-soft)}
+html.dark .service-card-image{background:var(--surface-soft)}
+html.dark .filter-toggle,html.dark .secondary-btn{border-color:var(--line)}
+html.dark .secondary-btn{background:var(--surface-soft);color:var(--text)}
+html.dark .breadcrumbs,html.dark .service-breadcrumb{color:var(--muted)}
+html.dark .breadcrumbs strong{color:var(--text)}
+html.dark .legal-shell section{border-top-color:var(--line)}
+html.dark .legal-shell a{color:#bdb5ff}
