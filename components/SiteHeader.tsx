@@ -16,7 +16,7 @@ export default function SiteHeader() {
   useEffect(() => {
     const savedCity = window.localStorage.getItem("uslugach-city");
     if (savedCity) setCity(savedCity);
-    const saved = window.sessionStorage.getItem("uslugach-theme");
+    const saved = window.localStorage.getItem("uslugach-theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const enabled = saved ? saved === "dark" : prefersDark;
     setDarkMode(enabled);
@@ -33,7 +33,7 @@ export default function SiteHeader() {
     const next = !darkMode;
     setDarkMode(next);
     document.documentElement.classList.toggle("dark", next);
-    window.sessionStorage.setItem("uslugach-theme", next ? "dark" : "light");
+    window.localStorage.setItem("uslugach-theme", next ? "dark" : "light");
   }
 
   async function loadUnread(userId:string){
