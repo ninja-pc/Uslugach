@@ -317,3 +317,154 @@ pre, code { overflow-wrap: anywhere; white-space: pre-wrap; }
     .modern-footer { padding-bottom: max(18px, env(safe-area-inset-bottom)); }
   }
 }
+
+
+/* Route-level mobile layouts: catalogues, forms, profile, admin and messaging. */
+@media (max-width: 760px) {
+  .page, .page-shell, .section, .catalog-page, .performers-page,
+  .notifications-page, .admin-page, .service-page, .complaint-page,
+  .request-create-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .page, .page-shell { padding-left: 14px; padding-right: 14px; }
+  .section { padding-left: 0; padding-right: 0; }
+  .home-hero, .hero-content, .catalog-hero, .catalog-heading,
+  .notifications-head, .request-create-head, .detail-hero,
+  .admin-head, .cabinet-hero, .service-detail-new, .service-main-new {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .home-hero, .hero-content, .catalog-hero, .catalog-heading,
+  .notifications-head, .admin-head, .cabinet-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .home-hero h1, .hero-content h1, .catalog-hero h1,
+  .catalog-heading h1, .notifications-head h1, .request-create-head h1,
+  .admin-head h1, .cabinet-hero h1, .detail-hero h1 {
+    font-size: clamp(1.65rem, 7vw, 2.25rem);
+    line-height: 1.12;
+    letter-spacing: -.035em;
+  }
+  .hero-search, .catalog-toolbar, .catalog-search, .search {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .hero-search { flex-wrap: wrap; }
+  .hero-search input, .catalog-toolbar input, .catalog-search input, .search input {
+    min-width: 0;
+    width: 100%;
+  }
+  .hero-search-button { width: 100%; justify-content: center; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .hero-actions > *, .catalog-hero > .primary-btn,
+  .catalog-heading > .button, .notifications-head > button {
+    max-width: 100%;
+    align-self: stretch;
+    text-align: center;
+    justify-content: center;
+  }
+  .service-preview-grid, .bento-grid, .service-grid, .performer-grid,
+  .similar-grid, .public-profile-grid, .cabinet-grid, .cabinet-columns,
+  .admin-grid, .admin-stats, .facts-grid, .form-grid, .upload-preview-grid,
+  .request-photo-grid, .service-photo-strip, .mobile-banner-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100%;
+    min-width: 0;
+  }
+  .service-card, .preview-card, .performer-card, .cabinet-list-card,
+  .content-card, .admin-stat, .admin-row, .similar-card, .form-card,
+  .sticky-card, .provider-card-new, .trust-card, .response-form-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .catalog-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    gap: 8px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .catalog-filters > * { flex: 0 0 auto; max-width: 82vw; }
+  .filter-panel { grid-template-columns: minmax(0, 1fr) !important; }
+  .filter-panel label, .form-grid label, .cabinet-form label { min-width: 0; }
+  .catalog-toolbar { display: flex; flex-wrap: wrap; gap: 10px; }
+  .catalog-toolbar > span { flex: 0 0 auto; }
+  .service-detail-new, .detail-layout, .public-profile-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .service-visual, .service-content, .service-side, .detail-description,
+  .detail-meta, .service-facts, .provider-card-new { width: 100%; min-width: 0; }
+  .service-side { position: static; }
+  .service-visual img, .service-card-image img, .similar-image img {
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .cabinet-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .cabinet-action { width: 100%; min-width: 0; }
+  .cabinet-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .cabinet-item-art { width: 100%; max-width: 100%; }
+  .cabinet-item-main { min-width: 0; }
+  .cabinet-item-price { overflow-wrap: anywhere; }
+  .admin-stats { gap: 10px; }
+  .admin-row { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+  .admin-row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .admin-row-actions > * { flex: 1 1 120px; }
+  .chat-shell { display: flex; flex-direction: column; width: 100%; min-width: 0; }
+  .chat-header { display: flex; gap: 10px; min-width: 0; }
+  .chat-header-info { min-width: 0; overflow-wrap: anywhere; }
+  .chat-messages { min-width: 0; max-width: 100%; }
+  .chat-message { max-width: min(88%, 100%); overflow-wrap: anywhere; }
+  .chat-compose { display: flex; gap: 8px; align-items: flex-end; min-width: 0; }
+  .chat-compose textarea, .chat-compose input { min-width: 0; width: 100%; }
+  .chat-send { flex: 0 0 auto; min-width: 44px; min-height: 44px; }
+  .chat-list-item { min-width: 0; max-width: 100%; }
+  .chat-list-main, .chat-list-top, .chat-list-meta { min-width: 0; overflow-wrap: anywhere; }
+  .notification-row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; }
+  .notification-copy { min-width: 0; overflow-wrap: anywhere; }
+  .notification-copy p { overflow-wrap: anywhere; }
+  .legal-consent-backdrop { align-items: flex-end; padding: 10px; }
+  .legal-consent { width: 100%; max-width: 100%; max-height: 85dvh; overflow-y: auto; padding: 20px; }
+  .legal-page { padding-left: 14px; padding-right: 14px; }
+  .legal-shell { width: 100%; max-width: 100%; padding: 20px 16px; }
+  .form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .form-actions > * { flex: 1 1 140px; }
+  .form-card { padding: clamp(16px, 5vw, 24px); }
+  .breadcrumbs { display: flex; flex-wrap: wrap; gap: 7px; }
+  .sticky-card { position: static; }
+  .footer-legal-links a { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .page, .page-shell { padding-left: 12px; padding-right: 12px; }
+  .form-card { border-radius: 18px; }
+  .service-card, .preview-card, .performer-card, .content-card,
+  .cabinet-list-card, .admin-stat { border-radius: 16px; }
+  .admin-row-actions > * { flex: 1 1 100%; }
+  .detail-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chat-header { flex-wrap: wrap; }
+  .chat-compose { position: sticky; bottom: 0; background: var(--bg); padding-bottom: env(safe-area-inset-bottom); }
+  .legal-consent h2 { font-size: 21px; }
+  .legal-consent p { font-size: 14px; line-height: 1.5; }
+}
+
+/* On medium screens keep two-column content only when it genuinely fits. */
+@media (min-width: 481px) and (max-width: 900px) {
+  .service-grid, .performer-grid, .bento-grid, .similar-grid,
+  .service-preview-grid, .public-service-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .form-grid, .filter-panel, .facts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .page, .page-shell { padding-left: 20px; padding-right: 20px; }
+}
