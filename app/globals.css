@@ -468,3 +468,95 @@ pre, code { overflow-wrap: anywhere; white-space: pre-wrap; }
   }
   .page, .page-shell { padding-left: 20px; padding-right: 20px; }
 }
+
+
+/* Header overflow fix: constrain every header row to the viewport on phones. */
+@media (max-width: 760px) {
+  .modern-header {
+    height: auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 100vw;
+    padding: 10px 0;
+    overflow: visible;
+  }
+  .header-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    align-items: center;
+    gap: 9px 10px;
+    width: calc(100% - 24px);
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 auto;
+  }
+  .header-main > * { min-width: 0; }
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .city-picker {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    min-width: 0;
+    max-width: 46vw;
+  }
+  .location-pill {
+    max-width: 100%;
+    min-width: 0;
+  }
+  .location-pill span {
+    display: block;
+    min-width: 0;
+    max-width: 27vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .main-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .main-nav::-webkit-scrollbar,
+  .header-actions::-webkit-scrollbar { display: none; }
+  .main-nav a { flex: 0 0 auto; }
+  .header-actions {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 7px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding: 2px 0 4px;
+  }
+  .header-actions > * { flex: 0 0 auto; }
+}
+@media (max-width: 360px) {
+  .header-main { width: calc(100% - 20px); column-gap: 6px; }
+  .brand { font-size: 17px; gap: 6px; }
+  .brand-mark { width: 24px; height: 24px; }
+  .city-picker { max-width: 44vw; }
+  .location-pill { padding: 8px; gap: 4px; }
+  .location-pill span { max-width: 24vw; }
+  .main-nav { gap: 4px; font-size: 12px; }
+  .main-nav a { padding-left: 4px; padding-right: 4px; }
+}
