@@ -16,6 +16,7 @@ main{min-height:100vh}
 .header-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
 .header-search{width:34px;height:34px;display:grid;place-items:center;color:#24314b}.header-search img{width:21px;height:21px}
 .header-login,.header-register{padding:12px 20px;border-radius:999px;font-size:13px;font-weight:750}
+.main-nav a,.header-login,.header-register,.header-logout { white-space: nowrap; overflow-wrap: normal; flex-shrink: 0; }
 .header-login{background:#fff;border:1px solid var(--line)}
 .header-register{background:linear-gradient(135deg,#504df4,#655eff);color:#fff;box-shadow:0 8px 18px rgba(85,81,245,.2)}
 .header-logout{border:0;background:transparent;color:var(--muted);cursor:pointer;font-weight:650}
@@ -214,7 +215,8 @@ html, body { width: 100%; max-width: 100%; }
 body { overflow-x: clip; }
 img, video, canvas, iframe, svg { max-width: 100%; }
 input, textarea, select, button { max-width: 100%; }
-h1, h2, h3, h4, p, a, button, label, td, th { overflow-wrap: anywhere; }
+h1, h2, h3, h4, p, label, td, th { overflow-wrap: anywhere; }
+a, button { overflow-wrap: normal; }
 main, section, article, form { min-width: 0; }
 button, a, input, select, textarea { touch-action: manipulation; }
 input, select, textarea { min-width: 0; }
