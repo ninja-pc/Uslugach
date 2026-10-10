@@ -55,7 +55,6 @@ export default function Home() {
   const [profiles, setProfiles] = useState<Record<string, Profile>>({});
   const [categoryMap, setCategoryMap] = useState<Record<number, Category>>({});
   const [loading, setLoading] = useState(true);
-  const [requestCount, setRequestCount] = useState(0);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [heroSearch, setHeroSearch] = useState("");
 
@@ -64,7 +63,7 @@ export default function Home() {
 
     async function load() {
       setLoading(true);
-      const [{ data: serviceRows }, { data: categoryRows }, { count: requestCountFromDb }] = await Promise.all([
+      const [{ data: serviceRows }, { data: categoryRows }] = await Promise.all([
         supabase
           .from("services")
           .select("id,user_id,title,description,price,price_type,region,city,work_format,category_id")
@@ -72,14 +71,12 @@ export default function Home() {
           .order("created_at", { ascending: false })
           .limit(8),
         supabase.from("categories").select("id,name,slug").eq("is_active", true),
-        supabase.from("requests").select("id", { count: "exact", head: true }).eq("status", "published"),
       ]);
 
       if (!mounted) return;
 
       const rows = (serviceRows ?? []) as Service[];
       setServices(rows);
-      setRequestCount(requestCountFromDb ?? 0);
 
       const cats = (categoryRows ?? []) as Category[];
       setCategoryMap(Object.fromEntries(cats.map((item) => [item.id, item])));
@@ -142,16 +139,6 @@ export default function Home() {
           </div>
           <div className="hero-art" aria-hidden="true"><img src="/illustrations/hero.svg" alt="" /></div>
         </div>
-        <a className="bento-card join-card" href="/services/new"><span className="card-kicker">Для специалистов</span><strong>Покажите,<br />что вы умеете</strong><span className="round-arrow">↗</span><div className="join-orb">+</div></a>
-        <a className="bento-card request-card" href="/requests"><span className="card-kicker">Заявки рядом</span><strong>Кто-то уже<br />ищет вас</strong><span className="request-count">{requestCount > 0 ? requestCount : "—"} <small>{requestCount > 0 ? "новых заявок" : "новых заявок пока нет"}</small></span><span className="round-arrow">↗</span></a>
-      </section>
-      <section className="mobile-banner-grid" aria-label="Быстрые действия">
-        <a className="mobile-banner mobile-banner-specialist" href="/services/new">
-          <span><small>Для специалистов</small><strong>Разместить услугу</strong></span><b aria-hidden="true">↗</b>
-        </a>
-        <a className="mobile-banner mobile-banner-request" href="/requests">
-          <span><small>Заявки рядом</small><strong>Найти заказ</strong></span><b aria-hidden="true">↗</b>
-        </a>
       </section>
       <section className="bento-grid category-bento"><div className="section-intro"><span className="eyebrow">Выберите направление</span><h2>Найдётся<br /><em>своё.</em></h2><a className="text-link" href="/services">Все категории →</a></div>{categories.slice(0, 6).map((category, index) => <a className={"bento-card category-tile " + category.tone + " cat-" + index} href={"/services?category=" + category.slug} key={category.name}><img className="category-illustration" src={category.image} alt="" /><span className="category-name">{category.name}</span><span className="category-arrow">↗</span></a>)}</section>
       <section className="content-section bento-services"><div className="section-head"><div><span className="eyebrow">Свежие предложения</span><h2>Услуги, которые<br /><em>выбирают сейчас</em></h2></div><a href="/services" className="text-link">Смотреть все →</a></div>{loading ? <div className="service-preview-grid">{[1, 2, 3].map((item) => <div className="preview-card preview-skeleton" key={item}><div className="skeleton-image" /></div>)}</div> : services.length === 0 ? <div className="empty"><strong>Пока нет опубликованных услуг</strong><p>Станьте первым исполнителем — разместите свою услугу.</p><a className="button" href="/services/new">Разместить услугу</a></div> : <div className="service-preview-grid">{services.slice(0, 4).map((service) => { const category = service.category_id ? categoryMap[service.category_id] : undefined; const provider = profiles[service.user_id]?.display_name || "Исполнитель"; return <a className="preview-card" href={"/service?id=" + service.id} key={service.id}><div className="preview-image"><img src={illustrationFor(service, category)} alt="" /><button type="button" className={"favorite" + (favorites.has(service.id) ? " is-favorite" : "")} aria-label={favorites.has(service.id) ? "Убрать из избранного" : "В избранное"} onClick={(event) => { event.preventDefault(); event.stopPropagation(); toggleFavorite(service.id); }}><img src="/icons/heart.svg" alt="" /></button></div><div className="service-category">{category?.name || "Услуга"}</div><h3>{service.title}</h3><p>{service.description || "Описание услуги пока не добавлено."}</p><div className="provider"><span className="avatar">{provider.slice(0, 1).toUpperCase()}</span><span><strong>{provider}</strong><small>{service.city || service.region || "Россия"}</small></span></div><strong className="price">{formatPrice(service.price, service.price_type)}</strong></a>; })}</div>}</section>
