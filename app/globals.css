@@ -247,3 +247,150 @@ html.dark .form-success{background:#15372f;color:#8de0bd}
 html.dark .form-error{background:#3b2029;color:#ffabb6}
 html.dark .service-category{background:#2b2850;color:#c3baff}
 html.dark .service-top span,html.dark .detail-meta span{color:var(--muted)}
+
+
+/* Responsive audit fixes: homepage theme, catalog filters, profile cards and small screens. */
+/* The homepage intentionally has its own palette; override its hard-coded light canvas in dark mode. */
+html.dark .bento-home{background:var(--bg)!important;color:var(--text)}
+html.dark .bento-home .hero-card{background:linear-gradient(135deg,#24243b,#1a2030)!important}
+html.dark .bento-home .hero-card:after{background:rgba(126,113,255,.18)}
+html.dark .bento-home .bento-services .preview-card{background:var(--surface)!important;border:1px solid var(--line)}
+html.dark .bento-home .preview-image{background:var(--surface-soft)}
+html.dark .bento-home .category-tile{box-shadow:none}
+html.dark .bento-home .section-intro .eyebrow,html.dark .bento-home .bento-services .eyebrow{color:#b8b0ff}
+html.dark .bento-home .bento-footer{background:linear-gradient(135deg,#202333,#171b27)!important}
+html.dark .bento-home .bento-footer h2,html.dark .bento-home .bento-footer p{color:var(--text)}
+html.dark .bento-home .bento-footer .footer-cta p{color:#b7c0d1}
+html.dark .bento-home .bento-footer .footer-cta .button{background:#c8c0ff;color:#211f38}
+html.dark .bento-home .hero-search-button{color:#fff}
+html.dark .bento-home .hero-search .search-field img{filter:brightness(1.4)}
+html.dark .bento-home .favorite{background:#252b3c}
+html.dark .bento-home .empty{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .bento-home .empty p{color:var(--muted)}
+
+/* Missing/weak page-level layouts discovered during route and CSS audit. */
+.page-shell .bento-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:stretch}
+.page-shell .bento-grid>.service-card{min-width:0;height:100%}
+.filter-panel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;margin:0 0 18px;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text)}
+.filter-panel label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.filter-panel input,.filter-panel select{max-width:100%;min-width:0;border:1px solid var(--line);border-radius:11px;padding:9px 11px;background:var(--surface);color:var(--text)}
+.filter-toggle{white-space:nowrap}
+.empty-state{padding:28px 20px;border:1px dashed var(--line);border-radius:20px;background:var(--surface);color:var(--text);text-align:center}
+.empty-state p{color:var(--muted)}
+.performer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.performer-card{min-width:0;padding:20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--text);box-shadow:0 8px 24px rgba(31,42,70,.04);display:flex;flex-direction:column;gap:12px}
+.performer-card-head{display:flex;align-items:center;gap:12px;min-width:0}
+.performer-avatar{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,#625cf5,#8c80ff);color:#fff;font-weight:850;font-size:18px}
+.performer-bio{color:var(--muted);font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+.performer-meta{display:flex;flex-wrap:wrap;gap:7px}
+.performer-meta>*{max-width:100%;overflow-wrap:anywhere}
+.performer-services{display:grid;gap:7px;margin-top:auto}
+.performer-services>*{min-width:0;overflow-wrap:anywhere}
+html.dark .performer-card{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .performer-bio{color:var(--muted)}
+html.dark .filter-panel{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .filter-panel input,html.dark .filter-panel select{background:var(--surface-soft);border-color:var(--line);color:var(--text)}
+html.dark .empty-state{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .empty-state p{color:var(--muted)}
+html.dark .public-profile-hero{background:linear-gradient(135deg,#24243b,#1a2030);border-color:var(--line)}
+html.dark .public-profile-hero p{color:var(--muted)}
+html.dark .public-service-item{background:var(--surface-soft);border-color:var(--line);color:var(--text)}
+html.dark .public-service-item span{color:var(--muted)}
+html.dark .chat-header,html.dark .chat-compose,html.dark .chat-hint{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .chat-messages,html.dark .chat-loading{background-color:#111722;background-image:radial-gradient(rgba(190,195,220,.05) 1px,transparent 1px);color:var(--text)}
+html.dark .chat-message{background:#252b3b;color:var(--text)}
+html.dark .chat-message.mine{background:#38315e;color:#f4f1ff}
+html.dark .chat-message small,html.dark .chat-header-info span{color:var(--muted)}
+html.dark .chat-empty{background:rgba(23,28,40,.92);color:var(--text)}
+html.dark .chat-empty span{color:var(--muted)}
+html.dark .chat-compose textarea,html.dark .chat-review textarea{background:var(--surface-soft);border-color:var(--line);color:var(--text)}
+html.dark .chat-review{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .chat-list-item.has-unread{background:#22243a;border-color:#454067}
+html.dark .chat-list-main p,html.dark .chat-list-top time{color:var(--muted)}
+html.dark .chat-list-item.has-unread .chat-list-main p{color:#e2e4f0}
+html.dark .chat-notification{background:var(--surface);border-color:var(--line);color:var(--text)}
+html.dark .chat-notification span:not(.chat-notification-dot){color:var(--muted)}
+
+/* Keep long Russian labels, forms, cards and action rows inside the viewport. */
+.page,.page-shell,.section,.content-section,.bento-home{min-width:0}
+.page img,.page-shell img,.section img,.content-section img{max-width:100%}
+.page h1,.page h2,.page h3,.page-shell h1,.page-shell h2,.page-shell h3{overflow-wrap:anywhere}
+.catalog-search,.search,.catalog-toolbar,.filter-panel,.admin-row,.public-service-item,.cabinet-item{min-width:0;max-width:100%}
+.catalog-search input,.catalog-toolbar input,.filter-panel input,.filter-panel select{min-width:0}
+.service-card-bottom,.public-service-item{flex-wrap:wrap}
+.service-card-bottom>* ,.public-service-item>*{min-width:0}
+@media(max-width:1000px){
+  .performer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .header-main{gap:14px}
+}
+@media(max-width:760px){
+  .performer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chat-shell{width:100%;border-radius:16px}
+  .chat-message{max-width:88%}
+  .chat-review{margin:12px 10px 0;padding:13px}
+  .catalog-heading,.catalog-hero{width:100%}
+  .catalog-heading h1{font-size:clamp(32px,8vw,40px);overflow-wrap:anywhere}
+  .catalog-toolbar{width:100%}
+  .filter-panel{align-items:stretch}
+  .filter-panel label{width:100%;justify-content:space-between}
+  .filter-panel label input,.filter-panel label select{flex:1}
+  .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-stat{padding:14px}
+  .admin-stat strong{font-size:25px}
+  .cabinet-hero{padding:20px}
+  .cabinet-profile{min-width:0;flex-wrap:wrap}
+  .cabinet-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cabinet-stats div{min-width:0}
+  .request-create-page{overflow:visible}
+}
+@media(max-width:520px){
+  .performer-grid{grid-template-columns:1fr}
+  .performer-card{padding:16px}
+  .bento-hero-wrap{width:calc(100% - 28px)}
+  .hero-card{min-height:0;padding:24px 20px 250px}
+  .hero-card h1{font-size:clamp(40px,12vw,48px)}
+  .hero-card .hero-art{right:-42px;bottom:-8px;width:min(72vw,280px)}
+  .hero-card .hero-search{width:100%;display:flex;flex-direction:column;padding:8px}
+  .hero-card .search-field{width:100%;min-width:0}
+  .hero-card .hero-search-button{width:100%;min-height:44px}
+  .category-bento .category-tile{padding:14px;min-width:0}
+  .category-bento .category-name{max-width:100%;overflow-wrap:anywhere}
+  .bento-services .section-head{align-items:flex-start;flex-direction:column}
+  .bento-services .section-head h2{font-size:clamp(28px,8vw,34px)}
+  .bento-services .service-preview-grid{grid-template-columns:1fr}
+  .bento-footer{padding:24px}
+  .bento-footer h2{font-size:clamp(34px,10vw,43px)}
+  .footer-cta .button{width:100%}
+  .service-content{padding:18px}
+  .service-content h1{font-size:clamp(30px,9vw,35px)}
+  .service-facts{grid-template-columns:1fr}
+  .service-side{display:flex}
+  .similar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .similar-image{height:110px}
+  .public-profile-hero{padding:18px}
+  .public-profile-hero h1{font-size:clamp(25px,8vw,30px)}
+  .public-rating{margin-left:0}
+  .public-service-item{align-items:flex-start}
+  .public-service-item b{white-space:normal}
+  .catalog-filters{gap:6px}
+  .catalog-filters button{max-width:100%;white-space:normal;text-align:left}
+  .catalog-page{padding-top:30px}
+  .catalog-heading h1{font-size:34px}
+  .form-card,.content-card{padding:16px}
+  .admin-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-stat span{font-size:11px}
+  .chat-shell{height:calc(100dvh - 100px);min-height:420px}
+  .chat-header{padding:0 12px}
+  .chat-compose{padding:8px}
+  .chat-compose textarea{padding:11px 13px}
+  .modern-header{height:auto;min-height:64px}
+  .header-main{width:calc(100% - 20px);gap:8px;flex-wrap:wrap;padding:8px 0}
+  .brand{font-size:19px;gap:6px}
+  .brand-mark{width:27px;height:27px}
+  .city-picker{margin-left:auto}
+  .header-actions{gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
+  .header-register{padding:9px 11px;font-size:11px}
+  .header-logout{display:none}
+  .theme-toggle{width:32px;height:32px}
+}
